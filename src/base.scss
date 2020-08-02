@@ -1,0 +1,24 @@
+$color-primary-main: #00BCD4;
+$color-primary-light: #B2EBF2;
+$color-primary-dark: #0097A7;
+
+$white: #FFF;
+$dark-white: #BEBEBE;
+$light-white: #E5E5E5;
+
+$black: #000;
+$dark-black: #4A4C4C;
+$light-black: #7A7E80;
+
+$default-transition: 0.2s ease-out;
+$default-font-size: 12px;
+
+.nav-link {
+    color: $color-primary-main;
+    text-decoration: none;
+    font-size: 16px;
+    
+    &:hover {
+        text-decoration: underline;
+    }
+}

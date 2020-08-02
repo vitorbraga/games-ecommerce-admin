@@ -1,0 +1,68 @@
+@import '../base';
+
+.container {
+    width: 100%;
+    height: 100%;
+    background: $light-white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login {
+    padding: 25px;
+    width: 300px;
+    background: rgba(grey, 0.3);
+}
+
+.font-style {
+    font-style: italic;
+}
+
+.form-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
+.field-wrapper {
+    margin-top: 20px;
+}
+
+.input-text {
+    padding: 4px;
+    border-radius: 0px;
+    border: 1px solid grey;
+}
+
+.button {
+    width: 100%;
+    text-align: center;
+}
+
+.paper {
+    margin-top: 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.avatar {
+    margin: 8px;
+    background-color: white;
+}
+
+.form {
+    width: 100%;
+    margin-top: 8px;
+}
+
+.submit {
+    margin: 24px 0px 16px;
+}
+
+.loading-box {
+    margin-top: 16px;
+}

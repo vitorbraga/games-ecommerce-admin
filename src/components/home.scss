@@ -1,0 +1,25 @@
+@import '../base';
+
+.hidden-span {
+    flex-grow: 1;
+}
+
+.login-button {
+    margin-right: 8px !important;
+}
+
+.full-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.center-content {
+    background-image: url("../images/frontpage.png");
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    background-position: center top;
+    background-attachment: fixed;
+    height: calc(100vh - 118px);
+}

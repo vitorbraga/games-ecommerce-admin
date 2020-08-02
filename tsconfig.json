@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+      "allowSyntheticDefaultImports": true,
+      "jsx": "react",
+      "module": "commonjs",
+      "noImplicitAny": true,
+      "outDir": "./build/",
+      "preserveConstEnums": true,
+      "removeComments": true,
+      "sourceMap": true,
+      "noUnusedLocals": true,
+      "strictNullChecks": true,
+      "target": "es2017",
+      "plugins": [
+        {
+          "transform": "typescript-is/lib/transform-inline/transformer",
+          "ignoreMethods": true
+        }
+      ]
+    },
+    "include": [
+      "./src/**/**/*"
+    ]
+  }
