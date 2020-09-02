@@ -22,7 +22,7 @@ import { AccountOverview } from './account';
 import { ResultMessageBox } from '../../widgets/result-message-box';
 import { Overview } from './overview';
 import { Categories } from './categories/categories';
-import { Products } from './products';
+import { Products } from './products/products';
 
 import * as theme from './home.scss';
 
@@ -135,7 +135,7 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
     }
 
     private handleClick = (tabName: string, callback?: () => void) => () => {
-        this.props.history.push(`/profile#${tabName}`);
+        this.props.history.push(`/home#${tabName}`);
         if (callback) {
             callback();
         }
@@ -208,7 +208,7 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
                                             <Categories authToken={authToken!} key={categoryTabKey} />
                                         </TabPanel>
                                         <TabPanel value={tabValue} index={2}>
-                                            <Products />
+                                            <Products authToken={authToken!} />
                                         </TabPanel>
                                         <TabPanel value={tabValue} index={3}>
                                             <AccountOverview user={user} />

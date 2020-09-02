@@ -19,4 +19,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     userLogout: () => dispatch(userLogout())
 });
 
-export const ProfileContainer = connect(mapStateToProps, mapDispatchToProps)(Home);
+export const HomeContainer = connect(mapStateToProps, mapDispatchToProps)(Home);

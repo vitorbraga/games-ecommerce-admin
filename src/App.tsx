@@ -11,7 +11,7 @@ import { Register } from './components/register';
 import { Page404 } from './components/page-404';
 import { RegisterSuccess } from './components/register-success';
 import { PrivateRouteContainer } from './utils/private-route';
-import { ProfileContainer } from './containers/HomeContainer';
+import { HomeContainer } from './containers/HomeContainer';
 import { PasswordRecovery } from './components/password-recovery';
 import { ChangePasswordWithToken } from './components/change-password-with-token';
 
@@ -44,7 +44,7 @@ export class App extends React.Component<{}, never> {
                                     <Route exact path="/" component={Home} />
                                     <Route path="/login" component={LoginContainer} />
                                     <Route path="/register" component={Register} />
-                                    <PrivateRouteContainer path="/profile" component={ProfileContainer} />
+                                    <PrivateRouteContainer path="/home" component={HomeContainer} />
                                     <Route path="/register-success" component={RegisterSuccess} />
                                     <Route path="/about" component={About} />
                                     <Route path="/password-recovery" component={PasswordRecovery} />
