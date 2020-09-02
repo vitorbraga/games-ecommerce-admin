@@ -3,7 +3,7 @@ import Typography from '@material-ui/core/Typography';
 import { User } from '../../modules/user/model';
 import { formatDateFromString } from '../../utils/date-utils';
 
-import * as theme from './account-overview.scss';
+import * as theme from './account.scss';
 
 interface AccountOverviewProps {
     user: User;
@@ -39,6 +39,9 @@ export class AccountOverview extends React.PureComponent<AccountOverviewProps, n
                         <div className={theme.value}>{formatDateFromString(user.updatedAt)}</div>
                     </div>
                 </div>
+                <Typography component="h2" variant="h5">
+                    Security (change password)
+                </Typography>
             </div>
         );
     }

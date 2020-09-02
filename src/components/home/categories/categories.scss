@@ -1,0 +1,64 @@
+@import '../../../base';
+
+.content-box {
+    width: 100%;
+}
+
+.category-map {
+    margin-top: 10px;
+    min-height: 100px;
+    display: flex;
+    justify-content: space-between;
+
+    .loading-circle {
+        align-self: center;
+        justify-self: center;
+    }
+}
+
+.category-item {
+    margin-left: 20px;
+}
+
+.category-item:first-of-type {
+    margin-left: 0;
+}
+
+.divider {
+    height: 1px;
+    border: none;
+    background-color: $dark-white;
+    margin: 20px 0;
+}
+
+.create-wrapper {
+    width: 500px;
+    display: flex;
+    flex-direction: column;
+
+    .parents-wrapper {
+        width: 100%;
+        padding: 8px 0;
+        
+        .category-select-wrapper {
+            display: flex;
+            align-items: center;
+
+            .select-left {
+                flex: 1;
+            }
+        }
+    }
+
+    .action-buttons-wrapper {
+        width: 100%;
+        padding: 8px 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .new-category-wrapper {
+        display: flex;
+        align-items: center;
+    }
+}

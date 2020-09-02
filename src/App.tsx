@@ -11,7 +11,7 @@ import { Register } from './components/register';
 import { Page404 } from './components/page-404';
 import { RegisterSuccess } from './components/register-success';
 import { PrivateRouteContainer } from './utils/private-route';
-import { ProfileContainer } from './containers/ProfileContainer';
+import { ProfileContainer } from './containers/HomeContainer';
 import { PasswordRecovery } from './components/password-recovery';
 import { ChangePasswordWithToken } from './components/change-password-with-token';
 

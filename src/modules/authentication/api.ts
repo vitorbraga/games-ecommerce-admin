@@ -11,7 +11,7 @@ export const authenticate = async (username: string, password: string): Promise<
         body: JSON.stringify({ username, password })
     };
 
-    const response: Response = await fetch(`${serverBaseUrl}/auth/login`, options);
+    const response: Response = await fetch(`${serverBaseUrl}/auth/admin/login`, options);
     const data = await response.json();
     const loginResponse: LoginResponse = assertType<LoginResponse>(data);
 

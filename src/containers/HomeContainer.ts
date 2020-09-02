@@ -3,7 +3,7 @@ import { Dispatch } from 'redux';
 import { AppState } from '../store';
 import { authToken } from '../modules/authentication/selector';
 import { userLogout } from '../modules/authentication/actions';
-import { Profile } from '../components/profile/profile';
+import { Home } from '../components/home/home';
 import { userId, user } from '../modules/user/selector';
 import { setUser } from '../modules/user/actions';
 import { User } from '../modules/user/model';
@@ -19,4 +19,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
     userLogout: () => dispatch(userLogout())
 });
 
-export const ProfileContainer = connect(mapStateToProps, mapDispatchToProps)(Profile);
+export const ProfileContainer = connect(mapStateToProps, mapDispatchToProps)(Home);

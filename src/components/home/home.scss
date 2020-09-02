@@ -20,7 +20,6 @@
 
 .avatar {
     margin: 8px;
-    // background-color: theme.palette.secondary.main,
 }
 
 .form {
@@ -43,7 +42,7 @@
 }
 
 .vertical-tabs {
-    width: 25%;
+    width: 180px;
 }
 
 .tab-panel {
@@ -54,6 +53,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 30px;
 }
 
 .root {
