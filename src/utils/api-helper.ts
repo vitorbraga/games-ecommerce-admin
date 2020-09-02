@@ -8,8 +8,7 @@ export enum FetchStatusEnum {
     failure = 'failure'
 }
 
-// TODO improve this
-export type FetchStatus = 'initial' | 'loading' | 'success' | 'failure';
+export type FetchStatus = keyof typeof FetchStatusEnum;
 
 export interface Builder {
     withJwt: (token: string) => Builder;
