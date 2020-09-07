@@ -1,10 +1,10 @@
 import * as jwtDecode from 'jwt-decode';
+import { User } from '../user/model';
 
 export interface JwtAuthToken {
     exp: number;
     iat: number;
-    userId: number;
-    email: string;
+    user: User;
 }
 
 export const isAuthenticated = (authToken: string | null): boolean => {

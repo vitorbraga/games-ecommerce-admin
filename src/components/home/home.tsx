@@ -17,7 +17,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core/styles';
 import { TypographyProps } from '@material-ui/system';
 import { User } from '../../modules/user/model';
-import { getUser } from '../../modules/user/api';
 import { AccountOverview } from './account';
 import { ResultMessageBox } from '../../widgets/result-message-box';
 import { Overview } from './overview';
@@ -49,7 +48,6 @@ const CustomTab = withStyles(() => ({
 
 interface HomeProps {
     authToken: string | null;
-    userId: number | null;
     user: User | null;
     setUser: (user: User | null) => void;
     userLogout: () => void;
@@ -98,22 +96,6 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
         error: '',
         categoryTabKey: 0
     };
-
-    public componentDidMount() {
-        const { authToken, userId, setUser } = this.props;
-
-        this.setState({ loading: true }, async () => {
-            try {
-                if (userId && authToken) {
-                    const user = await getUser(userId, authToken);
-                    setUser(user);
-                    this.setState({ loading: false });
-                }
-            } catch (error) {
-                this.setState({ loading: false, error: error.message });
-            }
-        });
-    }
 
     private a11yProps = (index: number) => ({ id: `vertical-tab-${index}`});
 

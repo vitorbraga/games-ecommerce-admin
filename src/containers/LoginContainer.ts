@@ -4,7 +4,8 @@ import { Login } from '../components/login';
 import { AppState } from '../store';
 import { authToken } from '../modules/authentication/selector';
 import { setAuthToken } from '../modules/authentication/actions';
-import { setUserId } from '../modules/user/actions';
+import { setUser } from '../modules/user/actions';
+import { User } from '../modules/user/model';
 
 const mapStateToProps = (state: AppState) => ({
     authToken: authToken(state.authentication)
@@ -12,7 +13,7 @@ const mapStateToProps = (state: AppState) => ({
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
     setAuthenticationToken: (authToken: string | null) => dispatch(setAuthToken(authToken)),
-    setUserId: (userId: number | null) => dispatch(setUserId(userId))
+    setUser: (user: User | null) => dispatch(setUser(user))
 });
 
 export const LoginContainer = connect(mapStateToProps, mapDispatchToProps)(Login);

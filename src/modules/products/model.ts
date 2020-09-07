@@ -1,5 +1,10 @@
 import { Category } from '../category/model';
 
+export enum ProductStatus {
+    AVAILABLE = 'AVAILABLE',
+    NOT_AVAILABLE = 'NOT_AVAILABLE'
+}
+
 export interface Product {
     id: number;
     title: string;

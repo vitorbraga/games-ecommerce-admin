@@ -17,13 +17,14 @@ import { authenticate } from '../modules/authentication/api';
 import { JwtAuthToken } from '../modules/authentication/helpers';
 import { errorMapper } from '../utils/messages-mapper';
 import { ResultMessageBox } from '../widgets/result-message-box';
+import { User } from '../modules/user/model';
 
 import * as theme from './login.scss';
 
 interface LoginProps {
     authToken: string | null;
     setAuthenticationToken: (authToken: string | null) => void;
-    setUserId: (userId: number | null) => void;
+    setUser: (user: User | null) => void;
     history: History<LocationState>;
 }
 
@@ -62,9 +63,9 @@ export class Login extends React.PureComponent<LoginProps, LoginState> {
                     const authenticationToken = await authenticate(this.state.email, this.state.password);
                     const decoded = jwtDecode<JwtAuthToken>(authenticationToken);
                     this.props.setAuthenticationToken(authenticationToken);
-                    this.props.setUserId(decoded.userId);
+                    this.props.setUser(decoded.user);
 
-                    this.props.history.push('/profile');
+                    this.props.history.push('/home');
                 } catch (error) {
                     this.setState({ submitLoading: false, loginError: error.message });
                 }
