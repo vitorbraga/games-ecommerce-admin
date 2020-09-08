@@ -81,3 +81,9 @@ export interface CreateProductBody {
 }
 
 export type UpdateProductBody = CreateProductBody;
+
+export interface ChangeProductStatusBody {
+    newStatus: ProductStatus;
+}
+
+export type ChangeProductStatusResponse = CreateProductResponse;

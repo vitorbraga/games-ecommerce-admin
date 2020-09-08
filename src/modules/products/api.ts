@@ -58,6 +58,23 @@ export const updateProduct = async (authToken: string, productId: number, produc
     }
 };
 
+export const changeProductStatus = async (authToken: string, productId: number, productBody: Model.ChangeProductStatusBody): Promise<Model.Product> => {
+    const options = {
+        headers: headersBuilder().with('Content-Type', 'application/json').with('Accept', 'application/json').withJwt(authToken).build(),
+        method: 'PATCH',
+        body: JSON.stringify(productBody)
+    };
+
+    const response: Response = await fetch(`${serverBaseUrl}/products/${productId}/status`, options);
+    const changeProductStatusResponse: Model.ChangeProductStatusResponse = await response.json();
+
+    if ('error' in changeProductStatusResponse) {
+        throw new Error(errorMapper[changeProductStatusResponse.error]);
+    } else {
+        return changeProductStatusResponse.product;
+    }
+};
+
 export const deleteProduct = async (authToken: string, productId: number): Promise<void> => {
     const options = {
         headers: headersBuilder().with('Content-Type', 'application/json').with('Accept', 'application/json').withJwt(authToken).build(),

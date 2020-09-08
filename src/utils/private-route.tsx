@@ -11,7 +11,7 @@ interface ProtectedRouteProps extends RouteProps {
 }
 
 class PrivateRoute extends Route<ProtectedRouteProps> {
-    render() {
+    public render() {
         let redirectPath: string = '';
         if (!isAuthenticated(this.props.authToken)) {
             redirectPath = this.props.authenticationPath;

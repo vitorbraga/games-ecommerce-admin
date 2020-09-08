@@ -2,7 +2,8 @@ import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import * as Model from '../../../modules/products/model';
 import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { CustomSnackbar, SnackbarType, SnackbarTypeEnum } from '../../../widgets/custom-snackbar';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -27,28 +28,34 @@ interface Props {
 }
 
 interface State {
-    loadingProducts: FetchStatus;
+    fetchStatus: FetchStatus;
     products: Model.Product[];
     deleteDialogOpen: Model.Product | null;
-    snackbarMessage: string | null;
+    snackbar: {
+        message: string;
+        type: SnackbarType;
+    };
 }
 
 export class ProductList extends React.PureComponent<Props, State> {
     public state: State = {
-        loadingProducts: FetchStatusEnum.initial,
+        fetchStatus: FetchStatusEnum.initial,
         products: [],
         deleteDialogOpen: null,
-        snackbarMessage: null
+        snackbar: {
+            message: '',
+            type: SnackbarTypeEnum.info
+        }
     };
 
     private loadProductList() {
-        this.setState({ loadingProducts: FetchStatusEnum.loading }, async () => {
+        this.setState({ fetchStatus: FetchStatusEnum.loading }, async () => {
             try {
                 const products = await ProductApi.getAllProducts();
-                this.setState({ products, loadingProducts: FetchStatusEnum.success });
+                this.setState({ products, fetchStatus: FetchStatusEnum.success });
             } catch (error) {
                 console.log(error);
-                this.setState({ loadingProducts: FetchStatusEnum.failure });
+                this.setState({ fetchStatus: FetchStatusEnum.failure });
             }
         });
     }
@@ -59,6 +66,21 @@ export class ProductList extends React.PureComponent<Props, State> {
 
     private handleClickDelete = (product: Model.Product) => () => {
         this.setState({ deleteDialogOpen: product });
+    }
+
+    private handleChangeProductStatus = (productId: number, newStatus: Model.ProductStatus) => async () => {
+        this.setState({ fetchStatus: FetchStatusEnum.loading }, async () => {
+            try {
+                await ProductApi.changeProductStatus(this.props.authToken, productId, { newStatus });
+                this.setState({
+                    snackbar: { type: SnackbarTypeEnum.success, message: 'Changed product status successfully.' }
+                }, () => {
+                    this.loadProductList();
+                });
+            } catch (error) {
+                this.setState({ snackbar: { type: SnackbarTypeEnum.error, message: error.message } });
+            }
+        });
     }
 
     private renderProductsTable() {
@@ -76,6 +98,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                             <TableCell align="right">Description</TableCell>
                             <TableCell align="right">Price</TableCell>
                             <TableCell align="right">Quantity Stock</TableCell>
+                            <TableCell align="right">Status</TableCell>
                             <TableCell align="right">Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -87,6 +110,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                                 <TableCell align="right">{product.description}</TableCell>
                                 <TableCell align="right">{product.price}</TableCell>
                                 <TableCell align="right">{product.quantityInStock}</TableCell>
+                                <TableCell align="right">{product.status}</TableCell>
                                 <TableCell align="right">
                                     <div className={theme.actionsWrapper}>
                                         <IconButton
@@ -102,7 +126,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                                                 title="Make not available"
                                                 size="small"
                                                 color="inherit"
-                                                onClick={() => console.log(121)}
+                                                onClick={this.handleChangeProductStatus(product.id, Model.ProductStatus.NOT_AVAILABLE)}
                                             >
                                                 <BlockIcon />
                                             </IconButton>
@@ -110,7 +134,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                                                 title="Make available"
                                                 size="small"
                                                 color="inherit"
-                                                onClick={() => console.log(121)}
+                                                onClick={this.handleChangeProductStatus(product.id, Model.ProductStatus.AVAILABLE)}
                                             >
                                                 <CheckCircleOutlineIcon />
                                             </IconButton>
@@ -142,11 +166,14 @@ export class ProductList extends React.PureComponent<Props, State> {
         if (product !== null) {
             try {
                 await ProductApi.deleteProduct(this.props.authToken, product.id);
-                this.setState({ deleteDialogOpen: null }, () => {
+                this.setState({
+                    deleteDialogOpen: null,
+                    snackbar: { type: SnackbarTypeEnum.success, message: 'Product removed successfully.' }
+                }, () => {
                     this.loadProductList();
                 });
             } catch (error) {
-                this.setState({ snackbarMessage: error.message });
+                this.setState({ snackbar: { type: SnackbarTypeEnum.error, message: error.message } });
             }
         }
     }
@@ -179,24 +206,30 @@ export class ProductList extends React.PureComponent<Props, State> {
     }
 
     private handleCloseSnackbar = () => {
-        this.setState({ snackbarMessage: null });
+        this.setState({ snackbar: { type: SnackbarTypeEnum.info, message: '' } });
     }
 
     private renderSnackbar() {
-        const { snackbarMessage } = this.state;
+        const { snackbar: { type, message } } = this.state;
 
         return (
-            <Snackbar
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center'
-                }}
-                open={!!snackbarMessage}
-                autoHideDuration={6000}
+            <CustomSnackbar
+                open={!!message}
                 onClose={this.handleCloseSnackbar}
-                message={snackbarMessage}
+                type={type}
+                message={message}
             />
         );
+    }
+
+    private renderStatus() {
+        const { fetchStatus } = this.state;
+
+        if (fetchStatus === FetchStatusEnum.loading) {
+            return <div className={theme.loadingCircle}><CircularProgress /></div>;
+        }
+
+        return null;
     }
 
     public render() {
@@ -205,6 +238,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                 <Typography component="h6" variant="h6">
                     List of products
                 </Typography>
+                {this.renderStatus()}
                 {this.renderProductsTable()}
                 {this.renderDeleteDialog()}
                 {this.renderSnackbar()}

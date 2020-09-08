@@ -6,81 +6,60 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import { Formik, Form, FormikHelpers } from 'formik';
+import * as Yup from 'yup';
 import { CategorySelector } from '../categories/category-selector';
 import { createProduct } from '../../../modules/products/api';
 import { FetchStatus, FetchStatusEnum } from '../../../utils/api-helper';
 import { CreateProductBody } from '../../../modules/products/model';
 import { ResultMessageBox } from '../../../widgets/result-message-box';
+import { ValidationError } from '../../../utils/messages-mapper';
 
 import * as theme from './create-product.scss';
+import { checkEmptyCategoryId } from '../../../utils/validators';
 
 interface Props {
     authToken: string;
 }
 
+interface FormData {
+    title: string;
+    description: string;
+    price: string;
+    quantityInStock: string;
+    tags: string;
+    categoryId: string;
+}
+
 interface State {
-    productBody: {
-        title: string;
-        description: string;
-        price: string;
-        quantityInStock: string;
-        tags: string;
-        categoryId: number;
-    };
     submitStatus: FetchStatus;
+    fieldErrors: ValidationError[];
 }
 
 export class CreateProduct extends React.PureComponent<Props, State> {
-    private static emptyProductBody = {
-        title: '',
-        description: '',
-        price: '',
-        quantityInStock: '',
-        tags: '',
-        categoryId: 0
-    };
-
     public state: State = {
-        productBody: { ...CreateProduct.emptyProductBody },
-        submitStatus: FetchStatusEnum.initial
+        submitStatus: FetchStatusEnum.initial,
+        fieldErrors: []
     };
 
-    private handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        event.persist();
-        this.setState((prevState) => ({
-            productBody: {
-                ...prevState.productBody,
-                [field]: event.target.value
-            }
-        } as Pick<State, any>));
-    }
-
-    private buildCreateProductBody = (): CreateProductBody => {
-        const { productBody } = this.state;
-
+    private createProductBodyFromFormData = (formData: FormData): CreateProductBody => {
         return {
-            ...productBody,
-            quantityInStock: parseInt(productBody.quantityInStock, 10),
-            categoryId: productBody.categoryId.toString()
+            ...formData,
+            quantityInStock: parseInt(formData.quantityInStock, 10)
         };
     }
 
-    private handleSubmit = () => {
+    private handleSubmit = (values: FormData, { resetForm }: FormikHelpers<FormData>) => {
         this.setState({ submitStatus: FetchStatusEnum.loading }, async () => {
             try {
-                await createProduct(this.props.authToken, this.buildCreateProductBody());
-                this.setState({
-                    submitStatus: FetchStatusEnum.success,
-                    productBody: { ...CreateProduct.emptyProductBody }
+                await createProduct(this.props.authToken, this.createProductBodyFromFormData(values));
+                this.setState({ submitStatus: FetchStatusEnum.success }, () => {
+                    resetForm();
                 });
             } catch (error) {
                 this.setState({ submitStatus: FetchStatusEnum.failure });
             }
         });
-    }
-
-    private handleSelectCategory = (categoryId: number) => {
-        this.setState({ productBody: { ...this.state.productBody, categoryId }});
     }
 
     private renderSubmitStatus() {
@@ -97,6 +76,24 @@ export class CreateProduct extends React.PureComponent<Props, State> {
         return null;
     }
 
+    private formInitialValues: FormData = {
+        title: '',
+        description: '',
+        price: '',
+        quantityInStock: '',
+        tags: '',
+        categoryId: '0'
+    };
+
+    private validationSchema = Yup.object().shape({
+        title: Yup.string().required('Title is required.'),
+        description: Yup.string().required('Description is required.'),
+        price: Yup.number().required('Price is required.'),
+        quantityInStock: Yup.number().required('Quantity in Stock is required.'),
+        tags: Yup.string().required('Tags are required.'),
+        categoryId: Yup.string().test('category-id', 'You need too blaa', checkEmptyCategoryId)
+    });
+
     public render() {
         return (
             <div className={theme.contentBox}>
@@ -104,78 +101,115 @@ export class CreateProduct extends React.PureComponent<Props, State> {
                     Create product
                 </Typography>
                 {this.renderSubmitStatus()}
-                <div className={theme.formWrapper}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                label="Title"
-                                onChange={this.handleInputChange('title')}
-                                autoFocus
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                label="Description"
-                                onChange={this.handleInputChange('description')}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                label="Price"
-                                onChange={this.handleInputChange('price')}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                label="Quantity in Stock"
-                                onChange={this.handleInputChange('quantityInStock')}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <TextField
-                                variant="outlined"
-                                required
-                                fullWidth
-                                label="Tags"
-                                onChange={this.handleInputChange('tags')}
-                            />
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Card variant="outlined">
-                                <CardContent>
-                                    <div><b>Category id: {this.state.productBody.categoryId}</b></div>
-                                    <CategorySelector
-                                        selectedCategoryId={this.state.productBody.categoryId}
-                                        onSelectCategory={this.handleSelectCategory}
-                                    />
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    </Grid>
-                    <div className={theme.submitWrapper}>
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            onClick={this.handleSubmit}
-                        >
-                            Submit
-                        </Button>
-                    </div>
-                </div>
+                <Formik
+                    initialValues={this.formInitialValues}
+                    onSubmit={this.handleSubmit}
+                    validationSchema={this.validationSchema}
+                >
+                    {(props) => {
+                        const { touched, errors, values, handleChange, handleBlur } = props;
+
+                        const handleSelectCategory = (categoryId: number) => {
+                            handleChange('categoryId')(categoryId.toString());
+                        };
+
+                        return (
+                            <Form>
+                                <div className={theme.formWrapper}>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                name="title"
+                                                variant="outlined"
+                                                fullWidth
+                                                label="Title"
+                                                value={values.title}
+                                                helperText={errors.title && touched.title ? errors.title : ''}
+                                                error={!!(errors.title && touched.title)}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                name="description"
+                                                variant="outlined"
+                                                fullWidth
+                                                label="Description"
+                                                value={values.description}
+                                                helperText={errors.description && touched.description ? errors.description : ''}
+                                                error={!!(errors.description && touched.description)}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                name="price"
+                                                variant="outlined"
+                                                fullWidth
+                                                label="Price"
+                                                value={values.price}
+                                                helperText={errors.price && touched.price ? errors.price : ''}
+                                                error={!!(errors.price && touched.price)}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                name="quantityInStock"
+                                                variant="outlined"
+                                                fullWidth
+                                                label="Quantity in Stock"
+                                                value={values.quantityInStock}
+                                                helperText={errors.quantityInStock && touched.quantityInStock ? errors.quantityInStock : ''}
+                                                error={!!(errors.quantityInStock && touched.quantityInStock)}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <TextField
+                                                name="tags"
+                                                variant="outlined"
+                                                fullWidth
+                                                label="Tags"
+                                                value={values.tags}
+                                                helperText={errors.tags && touched.tags ? errors.tags : ''}
+                                                error={!!(errors.tags && touched.tags)}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Card variant="outlined" style={{ borderColor: errors.categoryId && touched.categoryId ? '#f44336' : '#c4c4c4' }}>
+                                                <CardContent>
+                                                    <div><b>Category id: {values.categoryId}</b></div>
+                                                    {errors.categoryId && touched.categoryId && <div className={theme.fieldError}>You need to choose a category</div>}
+                                                    <CategorySelector
+                                                        selectedCategoryId={parseInt(values.categoryId, 10)}
+                                                        onSelectCategory={handleSelectCategory}
+                                                    />
+                                                </CardContent>
+                                            </Card>
+                                        </Grid>
+                                    </Grid>
+                                    <div className={theme.submitWrapper}>
+                                        <Button
+                                            type="submit"
+                                            fullWidth
+                                            variant="contained"
+                                            color="primary"
+                                        >
+                                            Submit
+                                    </Button>
+                                    </div>
+                                </div>
+                            </Form>
+                        );
+                    }}
+                </Formik>
             </div>
         );
     }

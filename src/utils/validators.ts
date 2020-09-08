@@ -11,3 +11,7 @@ export const isEmail = (email: string): boolean => {
 export const checkPasswordComplexity = (password: string): boolean => {
     return password.length >= 6 && hasNumber(password);
 };
+
+export const checkEmptyCategoryId = (categoryId: string | undefined | null): boolean => {
+    return categoryId !== null && categoryId !== undefined && categoryId !== '0';
+};

@@ -40,7 +40,6 @@ interface FormFields {
 }
 
 export class Register extends React.PureComponent<RegisterProps, RegisterState> {
-
     public state: RegisterState = {
         firstName: '',
         lastName: '',
