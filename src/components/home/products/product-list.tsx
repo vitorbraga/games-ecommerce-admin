@@ -18,6 +18,7 @@ import * as ProductApi from '../../../modules/products/api';
 import { formatPrice } from '../../../utils/common-helper';
 import { PicturesDialog } from './pictures-dialog';
 import { ConfirmationDialog } from '../../../widgets/confirmation-dialog';
+import { ResultMessageBox } from '../../../widgets/result-message-box';
 
 import * as theme from './product-list.scss';
 
@@ -88,11 +89,11 @@ export class ProductList extends React.PureComponent<Props, State> {
     }
 
     private renderProductsTable() {
-        const { products } = this.state;
+        const { products, fetchStatus } = this.state;
 
-        if (products.length === 0) {
-            return <div>No products</div>;
-        } else {
+        if (products.length === 0 && fetchStatus === FetchStatusEnum.initial) {
+            return <div>No products.</div>;
+        } else if (products.length > 0) {
             return (
                 <Table aria-label="simple table">
                     <TableHead>
@@ -202,11 +203,17 @@ export class ProductList extends React.PureComponent<Props, State> {
         this.setState({ snackbar: { type: SnackbarTypeEnum.info, message: '' } });
     }
 
+    private handleResetFetchStatus = () => {
+        this.setState({ fetchStatus: FetchStatusEnum.initial });
+    }
+
     private renderStatus() {
         const { fetchStatus } = this.state;
 
         if (fetchStatus === FetchStatusEnum.loading) {
             return <div className={theme.loadingCircle}><CircularProgress /></div>;
+        } else if (fetchStatus === FetchStatusEnum.failure) {
+            return <ResultMessageBox type="error" message="Failed fetching products." onClose={this.handleResetFetchStatus} />;
         }
 
         return null;

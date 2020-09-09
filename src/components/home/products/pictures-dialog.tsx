@@ -68,7 +68,7 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
         if (fetchStatus === FetchStatusEnum.loading) {
             return <div className={theme.loadingCircle}><CircularProgress /></div>;
         } else if (fetchStatus === FetchStatusEnum.failure) {
-            return <ResultMessageBox type="error" message="Failed fetching current product pictures." />;
+            return <ResultMessageBox type="error" message="Failed fetching current product pictures." onClose={this.handleResetFetchStatus('fetchStatus')} />;
         }
 
         return null;
@@ -90,7 +90,7 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
         const { deleteDialogOpen: picture } = this.state;
 
         if (picture) {
-            this.setState({ pictureUploadStatus: FetchStatusEnum.loading }, async () => {
+            this.setState({ deletePictureStatus: FetchStatusEnum.loading }, async () => {
                 try {
                     await PictureApi.deletePicture(this.props.authToken, picture.id);
                     this.setState({
@@ -122,22 +122,64 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
         }
     }
 
+    private handleResetFetchStatus = (property: 'fetchStatus' | 'pictureUploadStatus' | 'deletePictureStatus') => () => {
+        this.setState({ [property]: FetchStatusEnum.initial } as Pick<State, any>);
+    }
+
     private renderDeletePictureStatus() {
         const { deletePictureStatus } = this.state;
 
         if (deletePictureStatus === FetchStatusEnum.loading) {
             return <div className={theme.loadingWrapper}><CircularProgress /></div>;
         } else if (deletePictureStatus === FetchStatusEnum.failure) {
-            return <ResultMessageBox type="error" message="Failed removing picture." />;
+            return <ResultMessageBox type="error" message="Failed removing picture." onClose={this.handleResetFetchStatus('deletePictureStatus')} />;
         } else if (deletePictureStatus === FetchStatusEnum.success) {
-            return <ResultMessageBox type="success" message="Picture removed sucessfully." />;
+            return <ResultMessageBox type="success" message="Picture removed sucessfully." onClose={this.handleResetFetchStatus('deletePictureStatus')} />;
         }
 
         return null;
     }
 
     private renderCurrentPictures() {
-        const { currentPictures } = this.state;
+        const { currentPictures, fetchStatus } = this.state;
+
+        let contentBody = null;
+
+        if (currentPictures.length === 0 && fetchStatus === FetchStatusEnum.initial) {
+            contentBody = <div>Product has no current pictures.</div>;
+        } else if (currentPictures.length > 0) {
+            contentBody = (
+                <div className={theme.pictureItemsWrapper}>
+                    {currentPictures.map((picture, index) => {
+                        const pictureUrl = this.generatePictureURL(picture.filename);
+
+                        return (
+                            <div className={theme.pictureItem} key={`picture-item-${index}`}>
+                                <Card variant="outlined">
+                                    <CardContent>
+                                        <a href={pictureUrl} target="_blank">
+                                            <img src={pictureUrl} className={theme.pictureImg} title={picture.filename} />
+                                        </a>
+                                    </CardContent>
+                                    <CardActions>
+                                        <div className={theme.actionsWrapper}>
+                                            <IconButton
+                                                title="Delete picture"
+                                                size="small"
+                                                color="inherit"
+                                                onClick={this.handleOpenDeleteDialog(picture)}
+                                            >
+                                                <DeleteIcon />
+                                            </IconButton>
+                                        </div>
+                                    </CardActions>
+                                </Card>
+                            </div>
+                        );
+                    })}
+                </div>
+            );
+        }
 
         return (
             <div className={theme.currentPicturesWrapper}>
@@ -147,38 +189,7 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
                 {this.renderFetchStatus()}
                 {this.renderDeletePictureStatus()}
                 <div className={theme.currentPicturesWrapper}>
-                    {currentPictures.length === 0
-                        ? <div>Product has no current pictures.</div>
-                        : <div className={theme.pictureItemsWrapper}>
-                            {currentPictures.map((picture, index) => {
-                                const pictureUrl = this.generatePictureURL(picture.filename);
-
-                                return (
-                                    <div className={theme.pictureItem} key={`picture-item-${index}`}>
-                                        <Card variant="outlined">
-                                            <CardContent>
-                                                <a href={pictureUrl} target="_blank">
-                                                    <img src={pictureUrl} className={theme.pictureImg} title={picture.filename} />
-                                                </a>
-                                            </CardContent>
-                                            <CardActions>
-                                                <div className={theme.actionsWrapper}>
-                                                    <IconButton
-                                                        title="Delete picture"
-                                                        size="small"
-                                                        color="inherit"
-                                                        onClick={this.handleOpenDeleteDialog(picture)}
-                                                    >
-                                                        <DeleteIcon />
-                                                    </IconButton>
-                                                </div>
-                                            </CardActions>
-                                        </Card>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    }
+                    {contentBody}
                 </div>
             </div>
         );
@@ -211,12 +222,12 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
     }
 
     private renderPictureUploadStatus() {
-        const { fetchStatus } = this.state;
+        const { pictureUploadStatus } = this.state;
 
-        if (fetchStatus === FetchStatusEnum.loading) {
+        if (pictureUploadStatus === FetchStatusEnum.loading) {
             return <div className={theme.loadingWrapper}><CircularProgress /></div>;
-        } else if (fetchStatus === FetchStatusEnum.failure) {
-            return <ResultMessageBox type="error" message="Failed uploading product pictures." />;
+        } else if (pictureUploadStatus === FetchStatusEnum.failure) {
+            return <ResultMessageBox type="error" message="Failed uploading product pictures." onClose={this.handleResetFetchStatus('pictureUploadStatus')} />;
         }
 
         return null;
