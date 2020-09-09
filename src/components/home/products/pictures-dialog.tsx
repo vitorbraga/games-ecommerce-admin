@@ -31,6 +31,7 @@ interface Props {
 interface State {
     fetchStatus: FetchStatus;
     pictureUploadStatus: FetchStatus;
+    deletePictureStatus: FetchStatus;
     currentPictures: PictureModel.Picture[];
     pictureFiles: FileList | null;
     deleteDialogOpen: PictureModel.Picture | null;
@@ -40,6 +41,7 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
     public state: State = {
         fetchStatus: FetchStatusEnum.initial,
         pictureUploadStatus: FetchStatusEnum.initial,
+        deletePictureStatus: FetchStatusEnum.initial,
         currentPictures: [],
         pictureFiles: null,
         deleteDialogOpen: null
@@ -88,13 +90,19 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
         const { deleteDialogOpen: picture } = this.state;
 
         if (picture) {
-            try {
-                // TODO loading and error
-                await PictureApi.deletePicture(this.props.authToken, picture.id);
-                this.fetchCurrentPictures();
-            } catch (error) {
-                console.log('error');
-            }
+            this.setState({ pictureUploadStatus: FetchStatusEnum.loading }, async () => {
+                try {
+                    await PictureApi.deletePicture(this.props.authToken, picture.id);
+                    this.setState({
+                        deletePictureStatus: FetchStatusEnum.success,
+                        deleteDialogOpen: null
+                    }, () => {
+                        this.fetchCurrentPictures();
+                    });
+                } catch (error) {
+                    this.setState({ deletePictureStatus: FetchStatusEnum.failure });
+                }
+            });
         }
     }
 
@@ -114,6 +122,20 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
         }
     }
 
+    private renderDeletePictureStatus() {
+        const { deletePictureStatus } = this.state;
+
+        if (deletePictureStatus === FetchStatusEnum.loading) {
+            return <div className={theme.loadingWrapper}><CircularProgress /></div>;
+        } else if (deletePictureStatus === FetchStatusEnum.failure) {
+            return <ResultMessageBox type="error" message="Failed removing picture." />;
+        } else if (deletePictureStatus === FetchStatusEnum.success) {
+            return <ResultMessageBox type="success" message="Picture removed sucessfully." />;
+        }
+
+        return null;
+    }
+
     private renderCurrentPictures() {
         const { currentPictures } = this.state;
 
@@ -123,6 +145,7 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
                     Current pictures
                 </Typography>
                 {this.renderFetchStatus()}
+                {this.renderDeletePictureStatus()}
                 <div className={theme.currentPicturesWrapper}>
                     {currentPictures.length === 0
                         ? <div>Product has no current pictures.</div>
@@ -135,7 +158,7 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
                                         <Card variant="outlined">
                                             <CardContent>
                                                 <a href={pictureUrl} target="_blank">
-                                                    <img src={pictureUrl} width="150" height="150" title={picture.filename} />
+                                                    <img src={pictureUrl} className={theme.pictureImg} title={picture.filename} />
                                                 </a>
                                             </CardContent>
                                             <CardActions>
@@ -166,17 +189,20 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
         const { authToken, product } = this.props;
         const { pictureFiles } = this.state;
 
-        // TODO add loading, error message
         if (pictureFiles) {
-            const formData = new FormData();
-            for (const pictureFile of pictureFiles) {
-                formData.append('pictures', pictureFile);
-            }
+            this.setState({ pictureUploadStatus: FetchStatusEnum.loading }, async () => {
+                try {
+                    const formData = new FormData();
+                    for (const pictureFile of pictureFiles) {
+                        formData.append('pictures', pictureFile);
+                    }
 
-            const pictures = await ProductApi.uploadProductPictures(authToken, product.id, formData);
-            this.setState({ currentPictures: pictures, pictureFiles: null });
-        } else {
-            console.log('No files.');
+                    const pictures = await ProductApi.uploadProductPictures(authToken, product.id, formData);
+                    this.setState({ currentPictures: pictures, pictureFiles: null });
+                } catch (error) {
+                    this.setState({ pictureUploadStatus: FetchStatusEnum.failure });
+                }
+            });
         }
     }
 

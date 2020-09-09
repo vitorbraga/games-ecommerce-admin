@@ -43,6 +43,13 @@
                     justify-content: flex-end;
                     width: 100%;
                 }
+
+                .picture-img {
+                    width: auto;
+                    height: auto;
+                    max-width: 150px;
+                    max-height: 150px;
+                }
             }
         }
     }
