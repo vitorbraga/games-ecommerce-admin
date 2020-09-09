@@ -1,6 +1,7 @@
 import { serverBaseUrl, headersBuilder } from '../../utils/api-helper';
 import * as Model from './model';
 import { errorMapper } from '../../utils/messages-mapper';
+import * as PictureModel from '../pictures/model';
 
 export const getAllProducts = async (): Promise<Model.Product[]> => {
     const response: Response = await fetch(`${serverBaseUrl}/products`);
@@ -89,7 +90,7 @@ export const deleteProduct = async (authToken: string, productId: number): Promi
     }
 };
 
-export const getPicturesByProductId = async (productId: number): Promise<Model.Picture[]> => {
+export const getPicturesByProductId = async (productId: number): Promise<PictureModel.Picture[]> => {
     const response: Response = await fetch(`${serverBaseUrl}/products/${productId}/pictures`);
     const picturesResponse: Model.GetPicturesByProductIdResponse = await response.json();
 
@@ -100,7 +101,7 @@ export const getPicturesByProductId = async (productId: number): Promise<Model.P
     }
 };
 
-export const uploadProductPictures = async (authToken: string, productId: number, pictures: FormData): Promise<Model.Picture[]> => {
+export const uploadProductPictures = async (authToken: string, productId: number, pictures: FormData): Promise<PictureModel.Picture[]> => {
     const options = {
         headers: headersBuilder().with('Accept', 'application/json').withJwt(authToken).build(),
         method: 'POST',

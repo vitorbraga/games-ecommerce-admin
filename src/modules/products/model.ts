@@ -1,4 +1,5 @@
 import { Category } from '../category/model';
+import { Picture } from '../pictures/model';
 
 export enum ProductStatus {
     AVAILABLE = 'AVAILABLE',
@@ -28,13 +29,6 @@ export interface Review {
     rating: number;
     title: string;
     description: string;
-    createdAt: string;
-    updatedAt: string;
-}
-
-export interface Picture {
-    id: number;
-    filename: string;
     createdAt: string;
     updatedAt: string;
 }

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import * as Model from '../../../modules/products/model';
-import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { CustomSnackbar, SnackbarType, SnackbarTypeEnum } from '../../../widgets/custom-snackbar';
 import Table from '@material-ui/core/Table';
@@ -13,15 +12,12 @@ import IconButton from '@material-ui/core/IconButton';
 import ImageIcon from '@material-ui/icons/Image';
 import DeleteIcon from '@material-ui/icons/Delete';
 import BlockIcon from '@material-ui/icons/Block';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { FetchStatus, FetchStatusEnum } from '../../../utils/api-helper';
 import * as ProductApi from '../../../modules/products/api';
 import { formatPrice } from '../../../utils/common-helper';
 import { PicturesDialog } from './pictures-dialog';
+import { ConfirmationDialog } from '../../../widgets/confirmation-dialog';
 
 import * as theme from './product-list.scss';
 
@@ -191,24 +187,13 @@ export class ProductList extends React.PureComponent<Props, State> {
 
         if (product) {
             return (
-                <Dialog
+                <ConfirmationDialog
                     open={!!product}
                     onClose={this.handleCloseDeleteDialog}
+                    onConfirm={this.handleConfirmDelete}
                 >
-                    <DialogContent>
-                        <DialogContentText>
-                            Are you sure you want to remove the product <b>{product.title}</b>?
-                        </DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.handleCloseDeleteDialog} color="primary">
-                            No
-                        </Button>
-                        <Button onClick={this.handleConfirmDelete} color="primary" autoFocus>
-                            Yes
-                        </Button>
-                    </DialogActions>
-                </Dialog>
+                    Are you sure you want to remove the product <b>{product.title}</b>?
+                </ConfirmationDialog>
             );
         }
     }

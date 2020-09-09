@@ -208,7 +208,7 @@ export class CreateProduct extends React.PureComponent<Props, State> {
                                             color="primary"
                                         >
                                             Submit
-                                    </Button>
+                                        </Button>
                                     </div>
                                 </div>
                             </Form>
