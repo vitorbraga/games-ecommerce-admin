@@ -30,13 +30,11 @@ export interface Review {
     description: string;
     createdAt: string;
     updatedAt: string;
-    product: Product;
 }
 
 export interface Picture {
     id: number;
     filename: string;
-    product: Product;
     createdAt: string;
     updatedAt: string;
 }
@@ -87,3 +85,13 @@ export interface ChangeProductStatusBody {
 }
 
 export type ChangeProductStatusResponse = CreateProductResponse;
+
+export type GetPicturesByProductIdResponse = {
+    success: boolean;
+    pictures: Picture[];
+} | {
+    success: false;
+    error: string;
+};
+
+export type UploadPicturesResponse = GetPicturesByProductIdResponse;

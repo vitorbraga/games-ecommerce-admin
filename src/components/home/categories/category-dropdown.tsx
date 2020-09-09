@@ -4,8 +4,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { Category } from '../../../modules/category/model';
 import * as CategoriesApi from '../../../modules/category/api';
 
-import * as theme from './category-select.scss';
-
 interface Props {
     index: number;
     parentId: number;
@@ -18,7 +16,7 @@ interface State {
     values: Category[];
 }
 
-export class CategorySelect extends React.PureComponent<Props, State> {
+export class CategoryDropdown extends React.PureComponent<Props, State> {
     public state: State = {
         parentId: this.props.parentId,
         values: []
@@ -39,20 +37,18 @@ export class CategorySelect extends React.PureComponent<Props, State> {
         const { values } = this.state;
 
         return (
-            <div className={theme.parentSelect}>
-                <Select
-                    fullWidth
-                    id={`category-selector-${index}`}
-                    value={selectedValue}
-                    onChange={this.handleChangeCategory}
-                >
-                    {values.map((category, index) => {
-                        return (
-                            <MenuItem key={`menuitem-categ-${index}`} value={category.id}>{category.label}</MenuItem>
-                        );
-                    })}
-                </Select>
-            </div>
+            <Select
+                fullWidth
+                id={`category-selector-${index}`}
+                value={selectedValue}
+                onChange={this.handleChangeCategory}
+            >
+                {values.map((category, index) => {
+                    return (
+                        <MenuItem key={`menuitem-categ-${index}`} value={category.id}>{category.label}</MenuItem>
+                    );
+                })}
+            </Select>
         );
     }
 }

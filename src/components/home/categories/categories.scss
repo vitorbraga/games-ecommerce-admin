@@ -4,26 +4,6 @@
     width: 100%;
 }
 
-.category-map {
-    margin-top: 10px;
-    min-height: 100px;
-    display: flex;
-    justify-content: space-between;
-
-    .loading-circle {
-        align-self: center;
-        justify-self: center;
-    }
-}
-
-.category-item {
-    margin-left: 20px;
-}
-
-.category-item:first-of-type {
-    margin-left: 0;
-}
-
 .divider {
     height: 1px;
     border: none;

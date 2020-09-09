@@ -8,7 +8,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { Formik, Form, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
-import { CategorySelector } from '../categories/category-selector';
+import { CategoryTree } from '../categories/category-tree';
 import { createProduct } from '../../../modules/products/api';
 import { FetchStatus, FetchStatusEnum } from '../../../utils/api-helper';
 import { CreateProductBody } from '../../../modules/products/model';
@@ -88,8 +88,8 @@ export class CreateProduct extends React.PureComponent<Props, State> {
     private validationSchema = Yup.object().shape({
         title: Yup.string().required('Title is required.'),
         description: Yup.string().required('Description is required.'),
-        price: Yup.number().required('Price is required.'),
-        quantityInStock: Yup.number().required('Quantity in Stock is required.'),
+        price: Yup.number().required('Price is required.').typeError('Price must have digits only.'),
+        quantityInStock: Yup.number().required('Quantity in Stock is required.').typeError('Quantity in Stock must have digits only.'),
         tags: Yup.string().required('Tags are required.'),
         categoryId: Yup.string().test('category-id', 'You need too blaa', checkEmptyCategoryId)
     });
@@ -136,6 +136,9 @@ export class CreateProduct extends React.PureComponent<Props, State> {
                                                 variant="outlined"
                                                 fullWidth
                                                 label="Description"
+                                                multiline
+                                                rows={2}
+                                                rowsMax={Infinity}
                                                 value={values.description}
                                                 helperText={errors.description && touched.description ? errors.description : ''}
                                                 error={!!(errors.description && touched.description)}
@@ -150,7 +153,9 @@ export class CreateProduct extends React.PureComponent<Props, State> {
                                                 fullWidth
                                                 label="Price"
                                                 value={values.price}
-                                                helperText={errors.price && touched.price ? errors.price : ''}
+                                                helperText={errors.price && touched.price
+                                                    ? errors.price
+                                                    : 'The latest two digits are cents. Ex: 1530: €15.30'}
                                                 error={!!(errors.price && touched.price)}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
@@ -187,7 +192,7 @@ export class CreateProduct extends React.PureComponent<Props, State> {
                                                 <CardContent>
                                                     <div><b>Category id: {values.categoryId}</b></div>
                                                     {errors.categoryId && touched.categoryId && <div className={theme.fieldError}>You need to choose a category</div>}
-                                                    <CategorySelector
+                                                    <CategoryTree
                                                         selectedCategoryId={parseInt(values.categoryId, 10)}
                                                         onSelectCategory={handleSelectCategory}
                                                     />

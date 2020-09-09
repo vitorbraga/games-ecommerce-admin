@@ -20,6 +20,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { FetchStatus, FetchStatusEnum } from '../../../utils/api-helper';
 import * as ProductApi from '../../../modules/products/api';
+import { formatPrice } from '../../../utils/common-helper';
+import { PicturesDialog } from './pictures-dialog';
 
 import * as theme from './product-list.scss';
 
@@ -31,6 +33,7 @@ interface State {
     fetchStatus: FetchStatus;
     products: Model.Product[];
     deleteDialogOpen: Model.Product | null;
+    picturesDialogOpen: Model.Product | null;
     snackbar: {
         message: string;
         type: SnackbarType;
@@ -42,6 +45,7 @@ export class ProductList extends React.PureComponent<Props, State> {
         fetchStatus: FetchStatusEnum.initial,
         products: [],
         deleteDialogOpen: null,
+        picturesDialogOpen: null,
         snackbar: {
             message: '',
             type: SnackbarTypeEnum.info
@@ -62,6 +66,10 @@ export class ProductList extends React.PureComponent<Props, State> {
 
     public componentDidMount() {
         this.loadProductList();
+    }
+
+    private handleOpenPicturesDialog = (product: Model.Product) => () => {
+        this.setState({ picturesDialogOpen: product });
     }
 
     private handleClickDelete = (product: Model.Product) => () => {
@@ -108,7 +116,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                                 <TableCell component="th" scope="row">{product.id}</TableCell>
                                 <TableCell align="right">{product.title}</TableCell>
                                 <TableCell align="right">{product.description}</TableCell>
-                                <TableCell align="right">{product.price}</TableCell>
+                                <TableCell align="right">{formatPrice(product.price)}</TableCell>
                                 <TableCell align="right">{product.quantityInStock}</TableCell>
                                 <TableCell align="right">{product.status}</TableCell>
                                 <TableCell align="right">
@@ -117,7 +125,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                                             title="Manage pictures"
                                             size="small"
                                             color="inherit"
-                                            onClick={() => console.log(121)}
+                                            onClick={this.handleOpenPicturesDialog(product)}
                                         >
                                             <ImageIcon />
                                         </IconButton>
@@ -209,6 +217,16 @@ export class ProductList extends React.PureComponent<Props, State> {
         this.setState({ snackbar: { type: SnackbarTypeEnum.info, message: '' } });
     }
 
+    private renderStatus() {
+        const { fetchStatus } = this.state;
+
+        if (fetchStatus === FetchStatusEnum.loading) {
+            return <div className={theme.loadingCircle}><CircularProgress /></div>;
+        }
+
+        return null;
+    }
+
     private renderSnackbar() {
         const { snackbar: { type, message } } = this.state;
 
@@ -222,14 +240,23 @@ export class ProductList extends React.PureComponent<Props, State> {
         );
     }
 
-    private renderStatus() {
-        const { fetchStatus } = this.state;
+    private handleClosePicturesDialog = () => {
+        this.setState({ picturesDialogOpen: null });
+    }
 
-        if (fetchStatus === FetchStatusEnum.loading) {
-            return <div className={theme.loadingCircle}><CircularProgress /></div>;
+    private renderPicturesDialog() {
+        const { picturesDialogOpen: product } = this.state;
+
+        if (product) {
+            return (
+                <PicturesDialog
+                    authToken={this.props.authToken}
+                    product={product}
+                    open={!!product}
+                    onClose={this.handleClosePicturesDialog}
+                />
+            );
         }
-
-        return null;
     }
 
     public render() {
@@ -242,6 +269,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                 {this.renderProductsTable()}
                 {this.renderDeleteDialog()}
                 {this.renderSnackbar()}
+                {this.renderPicturesDialog()}
             </div>
         );
     }

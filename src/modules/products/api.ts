@@ -88,3 +88,31 @@ export const deleteProduct = async (authToken: string, productId: number): Promi
         throw new Error(errorMapper[deleteProductResponse.error]);
     }
 };
+
+export const getPicturesByProductId = async (productId: number): Promise<Model.Picture[]> => {
+    const response: Response = await fetch(`${serverBaseUrl}/products/${productId}/pictures`);
+    const picturesResponse: Model.GetPicturesByProductIdResponse = await response.json();
+
+    if ('error' in picturesResponse) {
+        throw new Error(errorMapper[picturesResponse.error]);
+    } else {
+        return picturesResponse.pictures;
+    }
+};
+
+export const uploadProductPictures = async (authToken: string, productId: number, pictures: FormData): Promise<Model.Picture[]> => {
+    const options = {
+        headers: headersBuilder().with('Accept', 'application/json').withJwt(authToken).build(),
+        method: 'POST',
+        body: pictures
+    };
+
+    const response: Response = await fetch(`${serverBaseUrl}/products/${productId}/pictures`, options);
+    const uploadPicturesResponse: Model.UploadPicturesResponse = await response.json();
+
+    if ('error' in uploadPicturesResponse) {
+        throw new Error(errorMapper[uploadPicturesResponse.error]);
+    } else {
+        return uploadPicturesResponse.pictures;
+    }
+};

@@ -20,6 +20,7 @@
     "@types/react-redux": "^7.1.9",
     "@types/react-router-dom": "^5.1.5",
     "circular-dependency-plugin": "^5.2.0",
+    "dinero.js": "^1.8.1",
     "express": "^4.17.1",
     "formik": "^2.1.5",
     "lodash": "^4.17.20",
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "@types/classnames": "^2.2.10",
+    "@types/dinero.js": "^1.6.5",
     "@types/jwt-decode": "^2.2.1",
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",

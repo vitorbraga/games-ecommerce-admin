@@ -5,11 +5,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Chip from '@material-ui/core/Chip';
 import { FetchStatus, FetchStatusEnum } from '../../../utils/api-helper';
 
-import * as theme from './categories.scss';
+import * as theme from './category-tree.scss';
 
 interface Props {
-    selectedCategoryId: number;
-    onSelectCategory: (categoryId: number) => void;
+    selectedCategoryId?: number;
+    onSelectCategory?: (categoryId: number) => void;
 }
 
 interface State {
@@ -18,7 +18,7 @@ interface State {
     selectedCategoryId: number | null;
 }
 
-export class CategorySelector extends React.PureComponent<Props, State> {
+export class CategoryTree extends React.PureComponent<Props, State> {
     public state: State = {
         categories: [],
         loadingMapStatus: FetchStatusEnum.initial,
@@ -31,27 +31,31 @@ export class CategorySelector extends React.PureComponent<Props, State> {
                 const categories = await CategoriesApi.getFullCategoryTrees();
                 this.setState({ categories, loadingMapStatus: FetchStatusEnum.success });
             } catch (error) {
-                console.log(error);
                 this.setState({ loadingMapStatus: FetchStatusEnum.failure });
             }
         });
     }
 
     private handleSelectCategory = (categoryId: number) => () => {
-        this.props.onSelectCategory(categoryId);
+        if (this.props.onSelectCategory) {
+            this.props.onSelectCategory(categoryId);
+        }
     }
 
     private renderCategory(category: Category): React.ReactNode {
-        const { selectedCategoryId } = this.props;
+        const { selectedCategoryId, onSelectCategory } = this.props;
         const { id, subCategories, label } = category;
 
         return (
             <div className={theme.categoryItem} key={`categ-${id}`}>
-                <Chip
-                    label={label}
-                    color={selectedCategoryId === category.id ? 'primary' : 'secondary'}
-                    onClick={this.handleSelectCategory(category.id)}
-                />
+                {onSelectCategory
+                    ? <Chip
+                        label={label}
+                        color={selectedCategoryId === category.id ? 'primary' : 'secondary'}
+                        onClick={this.handleSelectCategory(category.id)}
+                    />
+                    : <div>{label}</div>
+                }
                 {subCategories
                     && subCategories.length > 0
                     && subCategories.map((item) => {
@@ -78,7 +82,7 @@ export class CategorySelector extends React.PureComponent<Props, State> {
 
     public render() {
         return (
-            <div className={theme.categoryMap}>
+            <div className={theme.categoryTree}>
                 {this.renderCategoryMap()}
             </div>
         );

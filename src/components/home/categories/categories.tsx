@@ -7,11 +7,12 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import { Category } from '../../../modules/category/model';
 import * as CategoriesApi from '../../../modules/category/api';
-import { CategorySelect } from './category-select';
+import { CategoryDropdown } from './category-dropdown';
 import { FetchStatus, FetchStatusEnum } from '../../../utils/api-helper';
 import { ResultMessageBox } from '../../../widgets/result-message-box';
 
 import * as theme from './categories.scss';
+import { CategoryTree } from './category-tree';
 
 interface CategoryCreation {
     parentIds: number[];
@@ -57,35 +58,6 @@ export class Categories extends React.PureComponent<Props, State> {
                 this.setState({ loadingMapStatus: FetchStatusEnum.failure });
             }
         });
-    }
-
-    private renderCategory(category: Category): React.ReactNode {
-        const { id, subCategories, label } = category;
-        return (
-            <div className={theme.categoryItem} key={`categ-${id}`}>
-                <div>{label}</div>
-                {subCategories
-                    && subCategories.length > 0
-                    && subCategories.map((item) => {
-                        return this.renderCategory(item);
-                    })
-                }
-            </div>
-        );
-    }
-
-    private renderCategoryMap() {
-        const { categories, loadingMapStatus } = this.state;
-
-        if (loadingMapStatus === FetchStatusEnum.loading) {
-            return <div className={theme.loadingCircle}><CircularProgress /></div>;
-        } else if (loadingMapStatus === FetchStatusEnum.failure) {
-            return <div>Failed</div>;
-        } else if (loadingMapStatus === FetchStatusEnum.success) {
-            return categories.map((category) => this.renderCategory(category));
-        }
-
-        return null;
     }
 
     private handleClickChooseParent = () => {
@@ -204,7 +176,7 @@ export class Categories extends React.PureComponent<Props, State> {
                         return (
                             <div className={theme.categorySelectWrapper}>
                                 <div className={theme.selectLeft}>
-                                    <CategorySelect
+                                    <CategoryDropdown
                                         key={`category-select-${index}`}
                                         index={index}
                                         parentId={realParentId}
@@ -262,8 +234,8 @@ export class Categories extends React.PureComponent<Props, State> {
                 <Typography component="h6" variant="h6">
                     Category map
                 </Typography>
-                <div className={theme.categoryMap}>
-                    {this.renderCategoryMap()}
+                <div>
+                    <CategoryTree />
                 </div>
                 <hr className={theme.divider} />
                 <Typography component="h6" variant="h6">
