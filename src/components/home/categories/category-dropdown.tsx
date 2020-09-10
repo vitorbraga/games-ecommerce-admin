@@ -6,13 +6,13 @@ import * as CategoriesApi from '../../../modules/category/api';
 
 interface Props {
     index: number;
-    parentId: number;
-    selectedValue: number;
-    onChangeCategory: (categoryId: number) => void;
+    parentId: string;
+    selectedValue: string;
+    onChangeCategory: (categoryId: string) => void;
 }
 
 interface State {
-    parentId: number;
+    parentId: string;
     values: Category[];
 }
 
@@ -29,7 +29,7 @@ export class CategoryDropdown extends React.PureComponent<Props, State> {
     }
 
     private handleChangeCategory = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.props.onChangeCategory(parseInt(event.target.value, 10));
+        this.props.onChangeCategory(event.target.value);
     }
 
     public render() {

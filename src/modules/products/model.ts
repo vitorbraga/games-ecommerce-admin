@@ -7,7 +7,7 @@ export enum ProductStatus {
 }
 
 export interface Product {
-    id: number;
+    id: string;
     title: string;
     description: string;
     status: string;
@@ -25,7 +25,7 @@ export interface Product {
 }
 
 export interface Review {
-    id: number;
+    id: string;
     rating: number;
     title: string;
     description: string;
@@ -34,7 +34,7 @@ export interface Review {
 }
 
 export interface UserProduct { // TODO
-    id: number;
+    id: string;
 }
 
 export type GetAllProductsResponse = {

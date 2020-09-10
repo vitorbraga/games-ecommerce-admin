@@ -12,6 +12,7 @@ import IconButton from '@material-ui/core/IconButton';
 import ImageIcon from '@material-ui/icons/Image';
 import DeleteIcon from '@material-ui/icons/Delete';
 import BlockIcon from '@material-ui/icons/Block';
+import EditIcon from '@material-ui/icons/Edit';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import { FetchStatus, FetchStatusEnum } from '../../../utils/api-helper';
 import * as ProductApi from '../../../modules/products/api';
@@ -19,6 +20,7 @@ import { formatPrice } from '../../../utils/common-helper';
 import { PicturesDialog } from './pictures-dialog';
 import { ConfirmationDialog } from '../../../widgets/confirmation-dialog';
 import { ResultMessageBox } from '../../../widgets/result-message-box';
+import { UpdateProductDialog } from './update-product-dialog';
 
 import * as theme from './product-list.scss';
 
@@ -31,6 +33,7 @@ interface State {
     products: Model.Product[];
     deleteDialogOpen: Model.Product | null;
     picturesDialogOpen: Model.Product | null;
+    updateProductDialogOpen: Model.Product | null;
     snackbar: {
         message: string;
         type: SnackbarType;
@@ -43,6 +46,7 @@ export class ProductList extends React.PureComponent<Props, State> {
         products: [],
         deleteDialogOpen: null,
         picturesDialogOpen: null,
+        updateProductDialogOpen: null,
         snackbar: {
             message: '',
             type: SnackbarTypeEnum.info
@@ -73,7 +77,11 @@ export class ProductList extends React.PureComponent<Props, State> {
         this.setState({ deleteDialogOpen: product });
     }
 
-    private handleChangeProductStatus = (productId: number, newStatus: Model.ProductStatus) => async () => {
+    private handleClickUpdate = (product: Model.Product) => () => {
+        this.setState({ updateProductDialogOpen: product });
+    }
+
+    private handleChangeProductStatus = (productId: string, newStatus: Model.ProductStatus) => async () => {
         this.setState({ fetchStatus: FetchStatusEnum.loading }, async () => {
             try {
                 await ProductApi.changeProductStatus(this.props.authToken, productId, { newStatus });
@@ -144,6 +152,14 @@ export class ProductList extends React.PureComponent<Props, State> {
                                                 <CheckCircleOutlineIcon />
                                             </IconButton>
                                         }
+                                        <IconButton
+                                            title="Edit product"
+                                            size="small"
+                                            color="inherit"
+                                            onClick={this.handleClickUpdate(product)}
+                                        >
+                                            <EditIcon />
+                                        </IconButton>
                                         <IconButton
                                             title="Delete product"
                                             size="small"
@@ -251,6 +267,25 @@ export class ProductList extends React.PureComponent<Props, State> {
         }
     }
 
+    private handleCloseUpdateProductDialog = () => {
+        this.setState({ updateProductDialogOpen: null });
+    }
+
+    private renderUpdateProductDialog() {
+        const { updateProductDialogOpen: product } = this.state;
+
+        if (product) {
+            return (
+                <UpdateProductDialog
+                    authToken={this.props.authToken}
+                    product={product}
+                    open={!!product}
+                    onClose={this.handleCloseUpdateProductDialog}
+                />
+            );
+        }
+    }
+
     public render() {
         return (
             <div className={theme.contentBox}>
@@ -262,6 +297,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                 {this.renderDeleteDialog()}
                 {this.renderSnackbar()}
                 {this.renderPicturesDialog()}
+                {this.renderUpdateProductDialog()}
             </div>
         );
     }

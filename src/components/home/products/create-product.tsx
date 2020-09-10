@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Formik, Form, FormikHelpers } from 'formik';
+import * as Yup from 'yup';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
@@ -6,8 +8,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import { Formik, Form, FormikHelpers } from 'formik';
-import * as Yup from 'yup';
 import { CategoryTree } from '../categories/category-tree';
 import { createProduct } from '../../../modules/products/api';
 import { FetchStatus, FetchStatusEnum } from '../../../utils/api-helper';
@@ -109,8 +109,8 @@ export class CreateProduct extends React.PureComponent<Props, State> {
                     {(props) => {
                         const { touched, errors, values, handleChange, handleBlur } = props;
 
-                        const handleSelectCategory = (categoryId: number) => {
-                            handleChange('categoryId')(categoryId.toString());
+                        const handleSelectCategory = (categoryId: string) => {
+                            handleChange('categoryId')(categoryId);
                         };
 
                         return (
@@ -193,7 +193,7 @@ export class CreateProduct extends React.PureComponent<Props, State> {
                                                     <div><b>Category id: {values.categoryId}</b></div>
                                                     {errors.categoryId && touched.categoryId && <div className={theme.fieldError}>You need to choose a category</div>}
                                                     <CategoryTree
-                                                        selectedCategoryId={parseInt(values.categoryId, 10)}
+                                                        selectedCategoryId={values.categoryId}
                                                         onSelectCategory={handleSelectCategory}
                                                     />
                                                 </CardContent>

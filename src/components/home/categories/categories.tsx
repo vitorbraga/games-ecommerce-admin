@@ -10,12 +10,12 @@ import * as CategoriesApi from '../../../modules/category/api';
 import { CategoryDropdown } from './category-dropdown';
 import { FetchStatus, FetchStatusEnum } from '../../../utils/api-helper';
 import { ResultMessageBox } from '../../../widgets/result-message-box';
-
-import * as theme from './categories.scss';
 import { CategoryTree } from './category-tree';
 
+import * as theme from './categories.scss';
+
 interface CategoryCreation {
-    parentIds: number[];
+    parentIds: string[];
     key: string;
     label: string;
 }
@@ -33,7 +33,7 @@ interface State {
 }
 
 export class Categories extends React.PureComponent<Props, State> {
-    private static unselectedParent = 0;
+    private static unselectedParent = '0';
     private static emptyCategoryCreation = {
         parentIds: [],
         key: '',
@@ -49,6 +49,10 @@ export class Categories extends React.PureComponent<Props, State> {
     };
 
     public componentDidMount() {
+        this.loadFullCategoryTree();
+    }
+
+    private loadFullCategoryTree() {
         this.setState({ loadingMapStatus: FetchStatusEnum.loading }, async () => {
             try {
                 const categories = await CategoriesApi.getFullCategoryTrees();
@@ -103,7 +107,7 @@ export class Categories extends React.PureComponent<Props, State> {
         return creatingCategoryStatus === FetchStatusEnum.loading || !key || !label;
     }
 
-    private handleCategorySelect = (index: number) => (categoryId: number) => {
+    private handleCategorySelect = (index: number) => (categoryId: string) => {
         this.setState((prevState) => {
             const newParentIds = [...prevState.categoryCreation.parentIds];
             newParentIds[index] = categoryId;
@@ -157,7 +161,7 @@ export class Categories extends React.PureComponent<Props, State> {
 
     private isNewCategoryButtonDisabled() {
         const { categoryCreation: { parentIds }, newCategory } = this.state;
-        return newCategory || parentIds.includes(0);
+        return newCategory || parentIds.includes(Categories.unselectedParent);
     }
 
     private renderCreationWizard() {
@@ -169,7 +173,7 @@ export class Categories extends React.PureComponent<Props, State> {
                 <div className={theme.parentsWrapper}>
                     {parentIds.map((parentId, index) => {
                         let realParentId = parentId;
-                        if (index > 0 && index === parentIds.length - 1 && parentId === 0) {
+                        if (index > 0 && index === parentIds.length - 1 && parentId === Categories.unselectedParent) {
                             realParentId = parentIds[index - 1];
                         }
 

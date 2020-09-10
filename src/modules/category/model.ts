@@ -1,7 +1,7 @@
 import { Product } from '../products/model';
 
 export interface Category {
-    id: number;
+    id: string;
     key: string;
     label: string;
     createdAt: string;

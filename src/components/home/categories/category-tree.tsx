@@ -8,14 +8,14 @@ import { FetchStatus, FetchStatusEnum } from '../../../utils/api-helper';
 import * as theme from './category-tree.scss';
 
 interface Props {
-    selectedCategoryId?: number;
-    onSelectCategory?: (categoryId: number) => void;
+    selectedCategoryId?: string;
+    onSelectCategory?: (categoryId: string) => void;
 }
 
 interface State {
     categories: Category[];
     loadingMapStatus: FetchStatus;
-    selectedCategoryId: number | null;
+    selectedCategoryId: string | null;
 }
 
 export class CategoryTree extends React.PureComponent<Props, State> {
@@ -36,7 +36,7 @@ export class CategoryTree extends React.PureComponent<Props, State> {
         });
     }
 
-    private handleSelectCategory = (categoryId: number) => () => {
+    private handleSelectCategory = (categoryId: string) => () => {
         if (this.props.onSelectCategory) {
             this.props.onSelectCategory(categoryId);
         }

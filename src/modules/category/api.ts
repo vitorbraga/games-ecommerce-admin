@@ -13,7 +13,7 @@ export const getFullCategoryTrees = async (): Promise<Model.Category[]> => {
     }
 };
 
-export const getSubCategoriesByParentId = async (parentId: number): Promise<Model.Category[]> => {
+export const getSubCategoriesByParentId = async (parentId: string): Promise<Model.Category[]> => {
     const response: Response = await fetch(`${serverBaseUrl}/categories/parent/${parentId}`);
     const subCategoriesResponse: Model.GetSubCategoriesByParentIdResponse = await response.json();
 
@@ -24,7 +24,7 @@ export const getSubCategoriesByParentId = async (parentId: number): Promise<Mode
     }
 };
 
-export const createCategory = async (authToken: string, parentId: number, key: string, label: string): Promise<Model.Category> => {
+export const createCategory = async (authToken: string, parentId: string, key: string, label: string): Promise<Model.Category> => {
     const options = {
         headers: headersBuilder().with('Content-Type', 'application/json').with('Accept', 'application/json').withJwt(authToken).build(),
         method: 'POST',

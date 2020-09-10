@@ -23,7 +23,7 @@ export const registerUser = async (user: UserRegister): Promise<User | FieldWith
     }
 };
 
-export const updateUser = async (userId: number, user: UserUpdate, authToken: string): Promise<User | FieldWithError[]> => {
+export const updateUser = async (userId: string, user: UserUpdate, authToken: string): Promise<User | FieldWithError[]> => {
     const options = {
         headers: headersBuilder()
             .with('Content-Type', 'application/json')
@@ -47,7 +47,7 @@ export const updateUser = async (userId: number, user: UserUpdate, authToken: st
     }
 };
 
-export const getUser = async (userId: number, authToken: string): Promise<User> => {
+export const getUser = async (userId: string, authToken: string): Promise<User> => {
     const options = {
         headers: headersBuilder().withJwt(authToken).build()
     };

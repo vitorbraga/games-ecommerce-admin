@@ -1,6 +1,6 @@
 
 export interface Picture {
-    id: number;
+    id: string;
     filename: string;
     createdAt: string;
     updatedAt: string;

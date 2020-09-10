@@ -2,7 +2,7 @@ import { serverBaseUrl, headersBuilder } from '../../utils/api-helper';
 import * as Model from './model';
 import { errorMapper } from '../../utils/messages-mapper';
 
-export const deletePicture = async (authToken: string, pictureId: number): Promise<void> => {
+export const deletePicture = async (authToken: string, pictureId: string): Promise<void> => {
     const options = {
         headers: headersBuilder().with('Content-Type', 'application/json').with('Accept', 'application/json').withJwt(authToken).build(),
         method: 'DELETE'

@@ -48,11 +48,11 @@ export class ChangePasswordWithToken extends React.PureComponent<ChangePasswordP
         document.title = 'Change password';
         const parsedUrl = qs.parse(this.props.location.search);
         const token = parsedUrl.token;
-        const userId = parsedUrl.u;
+        const userId = parsedUrl.u as string;
 
         if (token && userId) {
             try {
-                await checkValidPasswordResetToken(token.toString(), userId.toString());
+                await checkValidPasswordResetToken(token.toString(), userId);
                 this.setState({ tokenIsValid: true });
             } catch (error) {
                 this.setState({ tokenIsValid: false, tokenCheckError: error.message });
@@ -82,10 +82,10 @@ export class ChangePasswordWithToken extends React.PureComponent<ChangePasswordP
         this.setState({ submitStage: 'submitting', submitError: '' }, async () => {
             const parsedUrl = qs.parse(this.props.location.search);
             const token = parsedUrl.token;
-            const userId = parsedUrl.u;
+            const userId = parsedUrl.u as string;
 
             try {
-                await changePasswordWithToken(newPassword, token!.toString(), userId!.toString());
+                await changePasswordWithToken(newPassword, token!.toString(), userId);
                 this.setState({ submitStage: 'success' });
             } catch (error) {
                 this.setState({ submitStage: 'initial', submitError: error.message });

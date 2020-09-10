@@ -14,7 +14,7 @@ export interface UserUpdate {
 }
 
 export interface User {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     email: string;
@@ -51,11 +51,11 @@ export type GetUserResponse = {
     error: string;
 };
 
-interface SetUserIdAction { type: typeof SET_USER_ID; payload: number | null; }
+interface SetUserIdAction { type: typeof SET_USER_ID; payload: string | null; }
 interface SetUserAction { type: typeof SET_USER; payload: User | null; }
 
 export interface UserState {
-    userId: number | null;
+    userId: string | null;
     user: User | null;
 }
 

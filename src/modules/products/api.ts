@@ -14,7 +14,7 @@ export const getAllProducts = async (): Promise<Model.Product[]> => {
     }
 };
 
-export const getProductById = async (productId: number): Promise<Model.Product> => {
+export const getProductById = async (productId: string): Promise<Model.Product> => {
     const response: Response = await fetch(`${serverBaseUrl}/products/${productId}`);
     const productResponse: Model.GetProductByIdResponse = await response.json();
 
@@ -42,7 +42,7 @@ export const createProduct = async (authToken: string, productBody: Model.Create
     }
 };
 
-export const updateProduct = async (authToken: string, productId: number, productBody: Model.UpdateProductBody): Promise<Model.Product> => {
+export const updateProduct = async (authToken: string, productId: string, productBody: Model.UpdateProductBody): Promise<Model.Product> => {
     const options = {
         headers: headersBuilder().with('Content-Type', 'application/json').with('Accept', 'application/json').withJwt(authToken).build(),
         method: 'PUT',
@@ -59,7 +59,7 @@ export const updateProduct = async (authToken: string, productId: number, produc
     }
 };
 
-export const changeProductStatus = async (authToken: string, productId: number, productBody: Model.ChangeProductStatusBody): Promise<Model.Product> => {
+export const changeProductStatus = async (authToken: string, productId: string, productBody: Model.ChangeProductStatusBody): Promise<Model.Product> => {
     const options = {
         headers: headersBuilder().with('Content-Type', 'application/json').with('Accept', 'application/json').withJwt(authToken).build(),
         method: 'PATCH',
@@ -76,7 +76,7 @@ export const changeProductStatus = async (authToken: string, productId: number, 
     }
 };
 
-export const deleteProduct = async (authToken: string, productId: number): Promise<void> => {
+export const deleteProduct = async (authToken: string, productId: string): Promise<void> => {
     const options = {
         headers: headersBuilder().with('Content-Type', 'application/json').with('Accept', 'application/json').withJwt(authToken).build(),
         method: 'DELETE'
@@ -90,7 +90,7 @@ export const deleteProduct = async (authToken: string, productId: number): Promi
     }
 };
 
-export const getPicturesByProductId = async (productId: number): Promise<PictureModel.Picture[]> => {
+export const getPicturesByProductId = async (productId: string): Promise<PictureModel.Picture[]> => {
     const response: Response = await fetch(`${serverBaseUrl}/products/${productId}/pictures`);
     const picturesResponse: Model.GetPicturesByProductIdResponse = await response.json();
 
@@ -101,7 +101,7 @@ export const getPicturesByProductId = async (productId: number): Promise<Picture
     }
 };
 
-export const uploadProductPictures = async (authToken: string, productId: number, pictures: FormData): Promise<PictureModel.Picture[]> => {
+export const uploadProductPictures = async (authToken: string, productId: string, pictures: FormData): Promise<PictureModel.Picture[]> => {
     const options = {
         headers: headersBuilder().with('Accept', 'application/json').withJwt(authToken).build(),
         method: 'POST',
