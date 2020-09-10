@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as Yup from 'yup';
+import NumberFormat from 'react-number-format';
 import { Formik, Form } from 'formik';
 import * as Model from '../../../modules/products/model';
 import Grid from '@material-ui/core/Grid';
@@ -47,7 +48,7 @@ export class UpdateProductDialog extends React.PureComponent<Props, State> {
 
     public getInitialValues(): FormData {
         const { product: { title, description, price, quantityInStock, tags, category } } = this.props;
-        return { title, description, price: price.toString(), quantityInStock: quantityInStock.toString(), tags, categoryId: category.id };
+        return { title, description, price: (price / 100).toString(), quantityInStock: quantityInStock.toString(), tags, categoryId: category.id };
     }
 
     private renderSubmitStatus() {
@@ -76,6 +77,7 @@ export class UpdateProductDialog extends React.PureComponent<Props, State> {
     private buildUpdateProductBodyFromFormData = (formData: FormData): Model.UpdateProductBody => {
         return {
             ...formData,
+            price: (parseFloat(formData.price) * 100).toString(),
             quantityInStock: parseInt(formData.quantityInStock, 10)
         };
     }
@@ -154,18 +156,26 @@ export class UpdateProductDialog extends React.PureComponent<Props, State> {
                                                 />
                                             </Grid>
                                             <Grid item xs={12}>
-                                                <TextField
-                                                    name="price"
+                                                <NumberFormat
+                                                    value={values.price}
                                                     variant="outlined"
                                                     fullWidth
+                                                    name="price"
                                                     label="Price"
-                                                    value={values.price}
+                                                    customInput={TextField}
+                                                    prefix="€"
+                                                    type="text"
+                                                    thousandSeparator=","
+                                                    decimalSeparator="."
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                    allowNegative={false}
                                                     helperText={errors.price && touched.price
                                                         ? errors.price
                                                         : 'The latest two digits are cents. Ex: 1530: €15.30'}
                                                     error={!!(errors.price && touched.price)}
-                                                    onChange={handleChange}
                                                     onBlur={handleBlur}
+                                                    onValueChange={({ value }) => handleChange({ target: { name: 'price', value } })}
                                                 />
                                             </Grid>
                                             <Grid item xs={12}>

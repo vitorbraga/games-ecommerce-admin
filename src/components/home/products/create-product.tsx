@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import * as Yup from 'yup';
+import NumberFormat from 'react-number-format';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
@@ -45,6 +46,7 @@ export class CreateProduct extends React.PureComponent<Props, State> {
     private createProductBodyFromFormData = (formData: FormData): CreateProductBody => {
         return {
             ...formData,
+            price: (parseFloat(formData.price) * 100).toString(),
             quantityInStock: parseInt(formData.quantityInStock, 10)
         };
     }
@@ -147,18 +149,26 @@ export class CreateProduct extends React.PureComponent<Props, State> {
                                             />
                                         </Grid>
                                         <Grid item xs={12}>
-                                            <TextField
-                                                name="price"
+                                            <NumberFormat
+                                                value={values.price}
                                                 variant="outlined"
                                                 fullWidth
+                                                name="price"
                                                 label="Price"
-                                                value={values.price}
+                                                customInput={TextField}
+                                                prefix="€"
+                                                type="text"
+                                                thousandSeparator=" "
+                                                decimalSeparator="."
+                                                decimalScale={2}
+                                                fixedDecimalScale={true}
+                                                allowNegative={false}
                                                 helperText={errors.price && touched.price
                                                     ? errors.price
                                                     : 'The latest two digits are cents. Ex: 1530: €15.30'}
                                                 error={!!(errors.price && touched.price)}
-                                                onChange={handleChange}
                                                 onBlur={handleBlur}
+                                                onValueChange={({ value }) => handleChange({ target: { name: 'price', value } })}
                                             />
                                         </Grid>
                                         <Grid item xs={12}>

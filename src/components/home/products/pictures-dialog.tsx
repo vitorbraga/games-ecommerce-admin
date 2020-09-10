@@ -143,7 +143,7 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
 
         let contentBody = null;
 
-        if (currentPictures.length === 0 && fetchStatus === FetchStatusEnum.initial) {
+        if (currentPictures.length === 0 && fetchStatus === FetchStatusEnum.success) {
             contentBody = <div>Product has no current pictures.</div>;
         } else if (currentPictures.length > 0) {
             contentBody = (

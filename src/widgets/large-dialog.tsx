@@ -27,7 +27,7 @@ export class LargeDialog extends React.PureComponent<Props, never> {
                     <Typography component="h6" variant="h6">
                         {this.props.title}
                     </Typography>
-                    <IconButton onClick={this.props.onClose}>
+                    <IconButton onClick={this.props.onClose} size="small">
                         <CloseIcon />
                     </IconButton>
                 </DialogTitle>
