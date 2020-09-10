@@ -14,9 +14,9 @@ import { FetchStatus, FetchStatusEnum } from '../../../utils/api-helper';
 import { CreateProductBody } from '../../../modules/products/model';
 import { ResultMessageBox } from '../../../widgets/result-message-box';
 import { ValidationError } from '../../../utils/messages-mapper';
+import { checkEmptyCategoryId } from '../../../utils/validators';
 
 import * as theme from './create-product.scss';
-import { checkEmptyCategoryId } from '../../../utils/validators';
 
 interface Props {
     authToken: string;

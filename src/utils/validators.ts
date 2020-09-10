@@ -8,8 +8,8 @@ export const isEmail = (email: string): boolean => {
     return EMAIL_REGEX.test(email.toLowerCase());
 };
 
-export const checkPasswordComplexity = (password: string): boolean => {
-    return password.length >= 6 && hasNumber(password);
+export const checkPasswordComplexity = (password: string | undefined | null): boolean => {
+    return password !== null && password !== undefined && password.length >= 6 && hasNumber(password);
 };
 
 export const checkEmptyCategoryId = (categoryId: string | undefined | null): boolean => {
