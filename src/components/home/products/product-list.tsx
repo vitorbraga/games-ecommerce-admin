@@ -53,13 +53,12 @@ export class ProductList extends React.PureComponent<Props, State> {
         }
     };
 
-    private loadProductList() {
+    private loadProductList = () => {
         this.setState({ fetchStatus: FetchStatusEnum.loading }, async () => {
             try {
                 const products = await ProductApi.getAllProducts();
                 this.setState({ products, fetchStatus: FetchStatusEnum.success });
             } catch (error) {
-                console.log(error);
                 this.setState({ fetchStatus: FetchStatusEnum.failure });
             }
         });
@@ -281,6 +280,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                     product={product}
                     open={!!product}
                     onClose={this.handleCloseUpdateProductDialog}
+                    onRefreshList={this.loadProductList}
                 />
             );
         }

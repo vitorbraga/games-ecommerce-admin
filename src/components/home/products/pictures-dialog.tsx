@@ -1,9 +1,6 @@
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
@@ -18,6 +15,7 @@ import * as PictureApi from '../../../modules/pictures/api';
 import { ResultMessageBox } from '../../../widgets/result-message-box';
 import { ConfirmationDialog } from '../../../widgets/confirmation-dialog';
 import * as PictureModel from '../../../modules/pictures/model';
+import { LargeDialog } from '../../../widgets/large-dialog';
 
 import * as theme from './pictures-dialog.scss';
 
@@ -275,23 +273,18 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
         const { open, onClose } = this.props;
 
         return (
-            <Dialog
-                maxWidth="lg"
-                fullWidth
+            <LargeDialog
+                title="Pictures Manager"
                 open={open}
                 onClose={onClose}
-                aria-labelledby="max-width-dialog-title"
             >
-                <DialogTitle id="max-width-dialog-title">Pictures manager</DialogTitle>
-                <DialogContent>
-                    <div className={theme.dialogContentWrapper}>
-                        {this.renderCurrentPictures()}
-                        <Divider />
-                        {this.renderFormUploadPictures()}
-                        {this.renderDeleteDialog()}
-                    </div>
-                </DialogContent>
-            </Dialog>
+                <div className={theme.dialogContentWrapper}>
+                    {this.renderCurrentPictures()}
+                    <Divider />
+                    {this.renderFormUploadPictures()}
+                    {this.renderDeleteDialog()}
+                </div>
+            </LargeDialog>
         );
     }
 }
