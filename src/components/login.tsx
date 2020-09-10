@@ -79,7 +79,7 @@ export class Login extends React.PureComponent<Props, State> {
         const { submitStatus, loginError } = this.state;
 
         if (submitStatus === FetchStatusEnum.loading) {
-            return <div className={theme.loadingCircle}><CircularProgress /></div>;
+            return <div className={theme.loadingWrapper}><CircularProgress /></div>;
         } else if (submitStatus === FetchStatusEnum.failure) {
             return <ResultMessageBox type="error" message={loginError!} onClose={this.handleResetSubmitStatus} />;
         }
@@ -110,31 +110,36 @@ export class Login extends React.PureComponent<Props, State> {
                             return (
                                 <Form>
                                     <div className={theme.form}>
-                                        <TextField
-                                            name="email"
-                                            variant="outlined"
-                                            fullWidth
-                                            label="Email Address"
-                                            margin="normal"
-                                            value={values.email}
-                                            helperText={errors.email && touched.email ? errors.email : ''}
-                                            error={!!(errors.email && touched.email)}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                            autoFocus
-                                        />
-                                        <TextField
-                                            name="password"
-                                            variant="outlined"
-                                            fullWidth
-                                            label="Password"
-                                            type="password"
-                                            value={values.password}
-                                            helperText={errors.password && touched.password ? errors.password : ''}
-                                            error={!!(errors.password && touched.password)}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
+                                        <Grid container spacing={2}>
+                                            <Grid item xs={12}>
+                                                <TextField
+                                                    name="email"
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    label="Email Address"
+                                                    value={values.email}
+                                                    helperText={errors.email && touched.email ? errors.email : ''}
+                                                    error={!!(errors.email && touched.email)}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    autoFocus
+                                                />
+                                            </Grid>
+                                            <Grid item xs={12}>
+                                                <TextField
+                                                    name="password"
+                                                    variant="outlined"
+                                                    fullWidth
+                                                    label="Password"
+                                                    type="password"
+                                                    value={values.password}
+                                                    helperText={errors.password && touched.password ? errors.password : ''}
+                                                    error={!!(errors.password && touched.password)}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                />
+                                            </Grid>
+                                        </Grid>
                                         <FormControlLabel
                                             control={<Checkbox value="remember" color="primary" />}
                                             label="Remember me"

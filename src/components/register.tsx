@@ -83,7 +83,7 @@ export class Register extends React.PureComponent<Props, State> {
         const { submitStatus, registerError } = this.state;
 
         if (submitStatus === FetchStatusEnum.loading) {
-            return <div className={theme.loadingCircle}><CircularProgress /></div>;
+            return <div className={theme.loadingWrapper}><CircularProgress /></div>;
         } else if (submitStatus === FetchStatusEnum.failure) {
             return <ResultMessageBox type="error" message={registerError!} onClose={this.handleResetSubmitStatus} />;
         }
