@@ -12,14 +12,10 @@ interface Props {
     authToken: string;
 }
 
-interface State {
-    selectedTab: number;
-}
-
 interface TabPanelProps {
     children?: React.ReactNode;
-    index: any;
-    value: any;
+    index: number;
+    value: number;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -49,38 +45,31 @@ function a11yProps(index: any) {
     };
 }
 
-export class Products extends React.PureComponent<Props, State> {
-    public state: State = {
-        selectedTab: 0
+export const Products: React.FC<Props> = ({ authToken }) => {
+    const [selectedTab, setSelectedTab] = React.useState(0);
+
+    const handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
+        setSelectedTab(newValue);
     };
 
-    private handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
-        this.setState({ selectedTab: newValue });
-    };
-
-    public render() {
-        const { authToken } = this.props;
-        const { selectedTab } = this.state;
-
-        return (
-            <div className={theme.contentBox}>
-                <AppBar position="static">
-                    <Tabs value={selectedTab} onChange={this.handleTabChange} aria-label="simple tabs example">
-                        <Tab label="List of products" {...a11yProps(0)} />
-                        <Tab label="Create product" {...a11yProps(1)} />
-                    </Tabs>
-                </AppBar>
-                <TabPanel value={selectedTab} index={0}>
-                    <div className={theme.productList}>
-                        <ProductList authToken={authToken} />
-                    </div>
-                </TabPanel>
-                <TabPanel value={selectedTab} index={1}>
-                    <div className={theme.createProduct}>
-                        <CreateProduct authToken={authToken} />
-                    </div>
-                </TabPanel>
-            </div>
-        );
-    }
-}
+    return (
+        <div className={theme.contentBox}>
+            <AppBar position="static">
+                <Tabs value={selectedTab} onChange={handleTabChange} aria-label="simple tabs example">
+                    <Tab label="List of products" {...a11yProps(0)} />
+                    <Tab label="Create product" {...a11yProps(1)} />
+                </Tabs>
+            </AppBar>
+            <TabPanel value={selectedTab} index={0}>
+                <div className={theme.productList}>
+                    <ProductList authToken={authToken} />
+                </div>
+            </TabPanel>
+            <TabPanel value={selectedTab} index={1}>
+                <div className={theme.createProduct}>
+                    <CreateProduct authToken={authToken} />
+                </div>
+            </TabPanel>
+        </div>
+    );
+};

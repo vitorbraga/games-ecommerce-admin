@@ -6,13 +6,13 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import * as theme from './result-message-box.scss';
 
-interface ResultMessageBoxProps {
+interface Props {
     type: 'success' | 'error' | 'warning';
     message?: string;
     onClose?: () => void;
 }
 
-export const ResultMessageBox: React.SFC<ResultMessageBoxProps> = ({ message, type, children, onClose }) => {
+export const ResultMessageBox: React.FC<Props> = ({ message, type, children, onClose }) => {
     return (
         <Box mt={2} mb={2} className={classNames(theme.resultMessageBox, theme[type])}>
             {children || <span>{message}</span>}

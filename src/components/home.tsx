@@ -20,21 +20,19 @@ const RegisterButton = withStyles(() => ({
     }
 }))(Button as any);
 
-export class Home extends React.PureComponent<{}, never> {
-    public render() {
-        return (
-            <div className={theme.fullContainer}>
-                <CssBaseline />
-                <AppBar position="static">
-                    <Toolbar variant="dense">
-                        <div className={theme.hiddenSpan} />
-                        <Button color="inherit" component={LoginLink} className={theme.loginButton}>Login</Button>
-                        <RegisterButton color="inherit" variant="contained" component={RegisterLink}>Register</RegisterButton>
-                    </Toolbar>
-                </AppBar>
-                <div className={theme.centerContent} />
-                <Footer />
-            </div>
-        );
-    }
-}
+export const Home: React.FC<{}> = () => {
+    return (
+        <div className={theme.fullContainer}>
+            <CssBaseline />
+            <AppBar position="static">
+                <Toolbar variant="dense">
+                    <div className={theme.hiddenSpan} />
+                    <Button color="inherit" component={LoginLink} className={theme.loginButton}>Login</Button>
+                    <RegisterButton color="inherit" variant="contained" component={RegisterLink}>Register</RegisterButton>
+                </Toolbar>
+            </AppBar>
+            <div className={theme.centerContent} />
+            <Footer />
+        </div>
+    );
+};

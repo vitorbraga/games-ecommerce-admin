@@ -11,27 +11,25 @@ interface Props {
     onConfirm: () => void;
 }
 
-export class ConfirmationDialog extends React.PureComponent<Props, never> {
-    public render() {
-        return (
-            <Dialog
-                open={this.props.open}
-                onClose={this.props.onClose}
-            >
-                <DialogContent>
-                    <DialogContentText>
-                        {this.props.children}
-                    </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={this.props.onClose} color="primary">
-                        No
-                    </Button>
-                    <Button onClick={this.props.onConfirm} color="primary" autoFocus>
-                        Yes
-                    </Button>
-                </DialogActions>
-            </Dialog>
-        );
-    }
-}
+export const ConfirmationDialog: React.FC<Props> = ({ open, onClose, onConfirm, children }) => {
+    return (
+        <Dialog
+            open={open}
+            onClose={onClose}
+        >
+            <DialogContent>
+                <DialogContentText>
+                    {children}
+                </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={onClose} color="primary">
+                    No
+                </Button>
+                <Button onClick={onConfirm} color="primary" autoFocus>
+                    Yes
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+};

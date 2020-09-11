@@ -4,9 +4,9 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import { Typography } from '@material-ui/core';
 
 import * as theme from './large-dialog.scss';
-import { Typography } from '@material-ui/core';
 
 interface Props {
     open: boolean;
@@ -14,27 +14,25 @@ interface Props {
     onClose: () => void;
 }
 
-export class LargeDialog extends React.PureComponent<Props, never> {
-    public render() {
-        return (
-            <Dialog
-                open={this.props.open}
-                onClose={this.props.onClose}
-                maxWidth="lg"
-                fullWidth
-            >
-                <DialogTitle disableTypography className={theme.dialogTitle}>
-                    <Typography component="h6" variant="h6">
-                        {this.props.title}
-                    </Typography>
-                    <IconButton onClick={this.props.onClose} size="small">
-                        <CloseIcon />
-                    </IconButton>
-                </DialogTitle>
-                <DialogContent>
-                    {this.props.children}
-                </DialogContent>
-            </Dialog>
-        );
-    }
-}
+export const LargeDialog: React.FC<Props> = ({ open, title, onClose, children }) => {
+    return (
+        <Dialog
+            open={open}
+            onClose={onClose}
+            maxWidth="lg"
+            fullWidth
+        >
+            <DialogTitle disableTypography className={theme.dialogTitle}>
+                <Typography component="h6" variant="h6">
+                    {title}
+                </Typography>
+                <IconButton onClick={onClose} size="small">
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
+            <DialogContent>
+                {children}
+            </DialogContent>
+        </Dialog>
+    );
+};

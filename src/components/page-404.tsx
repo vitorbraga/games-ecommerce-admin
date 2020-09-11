@@ -7,20 +7,18 @@ import { Footer } from '../widgets/footer';
 
 import * as theme from './page-404.scss';
 
-export class Page404 extends React.PureComponent<{}, never> {
-    public render() {
-        return (
-            <div className={theme.root}>
-                <CssBaseline />
-                <Container component="main" className={theme.mainContainer} maxWidth="sm">
-                    <span className={theme.bigLabel}>404</span>
-                    <Typography variant="h5" component="h2" align="center" gutterBottom>
+export const Page404: React.FC<{}> = () => {
+    return (
+        <div className={theme.root}>
+            <CssBaseline />
+            <Container component="main" className={theme.mainContainer} maxWidth="sm">
+                <span className={theme.bigLabel}>404</span>
+                <Typography variant="h5" component="h2" align="center" gutterBottom>
                         Oops, we can't find that page.
-                    </Typography>
-                    <Typography variant="body1">Click <Link to={'/'} className={theme.navLink}>here</Link> to go back to the homepage.</Typography>
-                </Container>
-                <Footer />
-            </div>
-        );
-    }
-}
+                </Typography>
+                <Typography variant="body1">Click <Link to={'/'} className={theme.navLink}>here</Link> to go back to the homepage.</Typography>
+            </Container>
+            <Footer />
+        </div>
+    );
+};
