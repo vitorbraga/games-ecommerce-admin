@@ -16,8 +16,8 @@ const RegisterLink = React.forwardRef<HTMLButtonElement, any>((props, ref) => <L
 const RegisterButton = withStyles(() => ({
     root: {
         color: '#0097A7',
-        backgroundColor: 'white',
-    },
+        backgroundColor: 'white'
+    }
 }))(Button as any);
 
 export class Home extends React.PureComponent<{}, never> {

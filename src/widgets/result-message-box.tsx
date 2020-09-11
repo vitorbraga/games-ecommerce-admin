@@ -16,8 +16,8 @@ export const ResultMessageBox: React.SFC<ResultMessageBoxProps> = ({ message, ty
     return (
         <Box mt={2} mb={2} className={classNames(theme.resultMessageBox, theme[type])}>
             {children || <span>{message}</span>}
-            {onClose &&
-                <IconButton title="close" size="small" color="inherit" onClick={onClose}>
+            {onClose
+                && <IconButton title="close" size="small" color="inherit" onClick={onClose}>
                     <CloseIcon />
                 </IconButton>
             }

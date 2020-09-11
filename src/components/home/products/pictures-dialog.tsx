@@ -78,11 +78,11 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
 
     private handleOpenDeleteDialog = (picture: PictureModel.Picture) => () => {
         this.setState({ deleteDialogOpen: picture });
-    }
+    };
 
     private handleCloseDeleteDialog = () => {
         this.setState({ deleteDialogOpen: null });
-    }
+    };
 
     private handleConfirmDelete = async () => {
         const { deleteDialogOpen: picture } = this.state;
@@ -102,7 +102,7 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
                 }
             });
         }
-    }
+    };
 
     private renderDeleteDialog() {
         const { deleteDialogOpen: picture } = this.state;
@@ -122,7 +122,7 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
 
     private handleResetFetchStatus = (property: 'fetchStatus' | 'pictureUploadStatus' | 'deletePictureStatus') => () => {
         this.setState({ [property]: FetchStatusEnum.initial } as Pick<State, any>);
-    }
+    };
 
     private renderDeletePictureStatus() {
         const { deletePictureStatus } = this.state;
@@ -207,17 +207,17 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
                     }
 
                     const pictures = await ProductApi.uploadProductPictures(authToken, product.id, formData);
-                    this.setState({ currentPictures: pictures, pictureFiles: null });
+                    this.setState({ pictureUploadStatus: FetchStatusEnum.success, currentPictures: pictures, pictureFiles: null });
                 } catch (error) {
                     this.setState({ pictureUploadStatus: FetchStatusEnum.failure });
                 }
             });
         }
-    }
+    };
 
     private handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ pictureFiles: event.target.files });
-    }
+    };
 
     private renderPictureUploadStatus() {
         const { pictureUploadStatus } = this.state;

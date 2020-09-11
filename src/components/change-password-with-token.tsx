@@ -21,8 +21,7 @@ interface MatchParams {
     u: string;
 }
 
-interface ChangePasswordProps extends RouteComponentProps<MatchParams> {
-}
+type ChangePasswordProps = RouteComponentProps<MatchParams>;
 
 interface ChangePasswordState {
     newPassword: string;
@@ -34,7 +33,6 @@ interface ChangePasswordState {
 }
 
 export class ChangePasswordWithToken extends React.PureComponent<ChangePasswordProps, ChangePasswordState> {
-
     public state: ChangePasswordState = {
         newPassword: '',
         newPasswordRepeat: '',
@@ -60,11 +58,11 @@ export class ChangePasswordWithToken extends React.PureComponent<ChangePasswordP
         } else {
             this.setState({ tokenIsValid: false, tokenCheckError: errorMapper.PASSWORD_RESET_MISSING_TOKEN_USERID });
         }
-    }
+    };
 
     private handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ [field]: event.target.value } as Pick<ChangePasswordState, any>);
-    }
+    };
 
     private handleSubmit = () => {
         const { newPassword, newPasswordRepeat } = this.state;
@@ -91,7 +89,7 @@ export class ChangePasswordWithToken extends React.PureComponent<ChangePasswordP
                 this.setState({ submitStage: 'initial', submitError: error.message });
             }
         });
-    }
+    };
 
     public render() {
         const { submitError, tokenIsValid, tokenCheckError, submitStage } = this.state;
@@ -111,18 +109,18 @@ export class ChangePasswordWithToken extends React.PureComponent<ChangePasswordP
                             Change password
                         </Typography>
                         {submitError && <ResultMessageBox type="error" message={submitError} />}
-                        {submitStage === 'submitting' &&
-                            <div className={theme.loadingBox}><CircularProgress /></div>
+                        {submitStage === 'submitting'
+                            && <div className={theme.loadingBox}><CircularProgress /></div>
                         }
-                        {submitStage === 'success' &&
-                            <div>
+                        {submitStage === 'success'
+                            && <div>
                                 <ResultMessageBox type="success">
                                     Your password has been changed successfully! <br />Click <a href={loginUrl}>here</a> to login.
                                 </ResultMessageBox>
                             </div>
                         }
-                        {submitStage === 'initial' &&
-                            <div className={theme.form}>
+                        {submitStage === 'initial'
+                            && <div className={theme.form}>
                                 <TextField
                                     variant="outlined"
                                     margin="normal"

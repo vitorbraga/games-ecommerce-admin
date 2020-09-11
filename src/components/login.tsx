@@ -69,11 +69,11 @@ export class Login extends React.PureComponent<Props, State> {
                 this.setState({ submitStatus: FetchStatusEnum.failure, loginError: error.message });
             }
         });
-    }
+    };
 
     private handleResetSubmitStatus = () => {
         this.setState({ submitStatus: FetchStatusEnum.initial });
-    }
+    };
 
     private renderSubmitStatus() {
         const { submitStatus, loginError } = this.state;

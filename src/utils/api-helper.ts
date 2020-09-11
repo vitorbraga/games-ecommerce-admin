@@ -1,3 +1,4 @@
+/* eslint-disable no-sequences */
 export const serverBaseUrl = process.env.SERVER_BASE_URL || 'http://localhost:4000';
 export const appBaseUrl = process.env.APP_BASE_URL || 'http://localhost:3000';
 

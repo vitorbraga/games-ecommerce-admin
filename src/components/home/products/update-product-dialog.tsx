@@ -46,6 +46,15 @@ export class UpdateProductDialog extends React.PureComponent<Props, State> {
         updateStatus: FetchStatusEnum.initial
     };
 
+    private validationSchema = Yup.object().shape({
+        title: Yup.string().required('Title is required.'),
+        description: Yup.string().required('Description is required.'),
+        price: Yup.number().required('Price is required.').typeError('Price must have digits only.'),
+        quantityInStock: Yup.number().required('Quantity in Stock is required.').typeError('Quantity in Stock must have digits only.'),
+        tags: Yup.string().required('Tags are required.'),
+        categoryId: Yup.string().test('category-id', 'You need too blaa', checkEmptyCategoryId)
+    });
+
     public getInitialValues(): FormData {
         const { product: { title, description, price, quantityInStock, tags, category } } = this.props;
         return { title, description, price: (price / 100).toString(), quantityInStock: quantityInStock.toString(), tags, categoryId: category.id };
@@ -65,22 +74,13 @@ export class UpdateProductDialog extends React.PureComponent<Props, State> {
         return null;
     }
 
-    private validationSchema = Yup.object().shape({
-        title: Yup.string().required('Title is required.'),
-        description: Yup.string().required('Description is required.'),
-        price: Yup.number().required('Price is required.').typeError('Price must have digits only.'),
-        quantityInStock: Yup.number().required('Quantity in Stock is required.').typeError('Quantity in Stock must have digits only.'),
-        tags: Yup.string().required('Tags are required.'),
-        categoryId: Yup.string().test('category-id', 'You need too blaa', checkEmptyCategoryId)
-    });
-
     private buildUpdateProductBodyFromFormData = (formData: FormData): Model.UpdateProductBody => {
         return {
             ...formData,
             price: (parseFloat(formData.price) * 100).toString(),
             quantityInStock: parseInt(formData.quantityInStock, 10)
         };
-    }
+    };
 
     private isSubmitButtonDisabled(): boolean {
         return this.state.updateStatus === FetchStatusEnum.loading;
@@ -97,7 +97,7 @@ export class UpdateProductDialog extends React.PureComponent<Props, State> {
                 this.setState({ updateStatus: FetchStatusEnum.failure });
             }
         });
-    }
+    };
 
     public render() {
         const { open, onClose } = this.props;

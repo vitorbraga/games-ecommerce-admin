@@ -43,41 +43,6 @@ export class CreateProduct extends React.PureComponent<Props, State> {
         fieldErrors: []
     };
 
-    private createProductBodyFromFormData = (formData: FormData): CreateProductBody => {
-        return {
-            ...formData,
-            price: (parseFloat(formData.price) * 100).toString(),
-            quantityInStock: parseInt(formData.quantityInStock, 10)
-        };
-    }
-
-    private handleSubmit = (values: FormData, { resetForm }: FormikHelpers<FormData>) => {
-        this.setState({ submitStatus: FetchStatusEnum.loading }, async () => {
-            try {
-                await createProduct(this.props.authToken, this.createProductBodyFromFormData(values));
-                this.setState({ submitStatus: FetchStatusEnum.success }, () => {
-                    resetForm();
-                });
-            } catch (error) {
-                this.setState({ submitStatus: FetchStatusEnum.failure });
-            }
-        });
-    }
-
-    private renderSubmitStatus() {
-        const { submitStatus } = this.state;
-
-        if (submitStatus === FetchStatusEnum.loading) {
-            return <div className={theme.loadingCircle}><CircularProgress /></div>;
-        } else if (submitStatus === FetchStatusEnum.failure) {
-            return <ResultMessageBox type="error" message="Failed creating category. Please try again." />;
-        } else if (submitStatus === FetchStatusEnum.success) {
-            return <ResultMessageBox type="success" message="Product created successfully." />;
-        }
-
-        return null;
-    }
-
     private formInitialValues: FormData = {
         title: '',
         description: '',
@@ -95,6 +60,41 @@ export class CreateProduct extends React.PureComponent<Props, State> {
         tags: Yup.string().required('Tags are required.'),
         categoryId: Yup.string().test('category-id', 'You need too blaa', checkEmptyCategoryId)
     });
+
+    private createProductBodyFromFormData = (formData: FormData): CreateProductBody => {
+        return {
+            ...formData,
+            price: (parseFloat(formData.price) * 100).toString(),
+            quantityInStock: parseInt(formData.quantityInStock, 10)
+        };
+    };
+
+    private handleSubmit = (values: FormData, { resetForm }: FormikHelpers<FormData>) => {
+        this.setState({ submitStatus: FetchStatusEnum.loading }, async () => {
+            try {
+                await createProduct(this.props.authToken, this.createProductBodyFromFormData(values));
+                this.setState({ submitStatus: FetchStatusEnum.success }, () => {
+                    resetForm();
+                });
+            } catch (error) {
+                this.setState({ submitStatus: FetchStatusEnum.failure });
+            }
+        });
+    };
+
+    private renderSubmitStatus() {
+        const { submitStatus } = this.state;
+
+        if (submitStatus === FetchStatusEnum.loading) {
+            return <div className={theme.loadingCircle}><CircularProgress /></div>;
+        } else if (submitStatus === FetchStatusEnum.failure) {
+            return <ResultMessageBox type="error" message="Failed creating category. Please try again." />;
+        } else if (submitStatus === FetchStatusEnum.success) {
+            return <ResultMessageBox type="success" message="Product created successfully." />;
+        }
+
+        return null;
+    }
 
     public render() {
         return (

@@ -30,7 +30,7 @@ export class CategoryDropdown extends React.PureComponent<Props, State> {
 
     private handleChangeCategory = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.props.onChangeCategory(event.target.value);
-    }
+    };
 
     public render() {
         const { index, selectedValue } = this.props;

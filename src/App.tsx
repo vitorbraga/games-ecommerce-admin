@@ -2,7 +2,7 @@ import * as React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Home } from './components/Home';
-import { About} from './components/About';
+import { About } from './components/About';
 import { LoginContainer } from './containers/LoginContainer';
 import { Provider } from 'react-redux';
 import { store, persistor } from './store';
@@ -57,5 +57,5 @@ export class App extends React.Component<{}, never> {
                 </PersistGate>
             </Provider>
         );
-      }
+    }
 }

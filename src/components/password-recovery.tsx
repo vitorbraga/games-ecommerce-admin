@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as Yup from 'yup';
 import { History, LocationState } from 'history';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -12,7 +13,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { passwordRecovery } from '../modules/authentication/api';
 import { ResultMessageBox } from '../widgets/result-message-box';
 import { errorMapper, successMapper } from '../utils/messages-mapper';
-import { isEmail } from '../utils/validators';
 
 import * as theme from './password-recovery.scss';
 
@@ -29,7 +29,6 @@ interface PasswordRecoveryState {
 }
 
 export class PasswordRecovery extends React.PureComponent<PasswordRecoveryProps, PasswordRecoveryState> {
-
     public state: PasswordRecoveryState = {
         email: '',
         emailFieldError: '',
@@ -40,12 +39,13 @@ export class PasswordRecovery extends React.PureComponent<PasswordRecoveryProps,
 
     private handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ [field]: event.target.value } as Pick<PasswordRecoveryState, any>);
-    }
+    };
 
     private handleSubmit = () => {
         const { email } = this.state;
         if (email) {
-            if (!isEmail(email)) {
+            const schema = Yup.string().email();
+            if (!schema.isValidSync(email)) {
                 this.setState({ emailFieldError: errorMapper.EMAIL_INVALID });
                 return;
             }
@@ -61,7 +61,7 @@ export class PasswordRecovery extends React.PureComponent<PasswordRecoveryProps,
         } else {
             this.setState({ emailFieldError: errorMapper.PASSWORD_RESET_MISSING_EMAIL });
         }
-    }
+    };
 
     public render() {
         const { submitLoading, passwordRecoveryProcessed, submitError, emailFieldError } = this.state;
@@ -80,8 +80,8 @@ export class PasswordRecovery extends React.PureComponent<PasswordRecoveryProps,
                     {submitError && <ResultMessageBox type="error" message={submitError} />}
                     {submitLoading && <div className={theme.loadingBox}><CircularProgress /></div>}
                     {passwordRecoveryProcessed && <ResultMessageBox type="success" message={successMapper.PASSWORD_RESET_EMAIL_SENT} />}
-                    {!passwordRecoveryProcessed &&
-                        <div className={theme.form}>
+                    {!passwordRecoveryProcessed
+                        && <div className={theme.form}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <TextField

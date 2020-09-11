@@ -62,7 +62,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                 this.setState({ fetchStatus: FetchStatusEnum.failure });
             }
         });
-    }
+    };
 
     public componentDidMount() {
         this.loadProductList();
@@ -70,15 +70,15 @@ export class ProductList extends React.PureComponent<Props, State> {
 
     private handleOpenPicturesDialog = (product: Model.Product) => () => {
         this.setState({ picturesDialogOpen: product });
-    }
+    };
 
     private handleClickDelete = (product: Model.Product) => () => {
         this.setState({ deleteDialogOpen: product });
-    }
+    };
 
     private handleClickUpdate = (product: Model.Product) => () => {
         this.setState({ updateProductDialogOpen: product });
-    }
+    };
 
     private handleChangeProductStatus = (productId: string, newStatus: Model.ProductStatus) => async () => {
         this.setState({ fetchStatus: FetchStatusEnum.loading }, async () => {
@@ -93,7 +93,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                 this.setState({ snackbar: { type: SnackbarTypeEnum.error, message: error.message } });
             }
         });
-    }
+    };
 
     private renderProductsTable() {
         const { products, fetchStatus } = this.state;
@@ -109,6 +109,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                             <TableCell align="right">Title</TableCell>
                             <TableCell align="right">Description</TableCell>
                             <TableCell align="right">Price</TableCell>
+                            <TableCell align="right">Category</TableCell>
                             <TableCell align="right">Quantity Stock</TableCell>
                             <TableCell align="right">Status</TableCell>
                             <TableCell align="right">Actions</TableCell>
@@ -121,6 +122,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                                 <TableCell align="right">{product.title}</TableCell>
                                 <TableCell align="right">{product.description}</TableCell>
                                 <TableCell align="right">{formatPrice(product.price)}</TableCell>
+                                <TableCell align="right">{product.category.key}</TableCell>
                                 <TableCell align="right">{product.quantityInStock}</TableCell>
                                 <TableCell align="right">{product.status}</TableCell>
                                 <TableCell align="right">
@@ -179,7 +181,7 @@ export class ProductList extends React.PureComponent<Props, State> {
 
     private handleCloseDeleteDialog = () => {
         this.setState({ deleteDialogOpen: null });
-    }
+    };
 
     private handleConfirmDelete = async () => {
         const { deleteDialogOpen: product } = this.state;
@@ -196,7 +198,7 @@ export class ProductList extends React.PureComponent<Props, State> {
                 this.setState({ snackbar: { type: SnackbarTypeEnum.error, message: error.message } });
             }
         }
-    }
+    };
 
     private renderDeleteDialog() {
         const { deleteDialogOpen: product } = this.state;
@@ -216,11 +218,11 @@ export class ProductList extends React.PureComponent<Props, State> {
 
     private handleCloseSnackbar = () => {
         this.setState({ snackbar: { type: SnackbarTypeEnum.info, message: '' } });
-    }
+    };
 
     private handleResetFetchStatus = () => {
         this.setState({ fetchStatus: FetchStatusEnum.initial });
-    }
+    };
 
     private renderStatus() {
         const { fetchStatus } = this.state;
@@ -249,7 +251,7 @@ export class ProductList extends React.PureComponent<Props, State> {
 
     private handleClosePicturesDialog = () => {
         this.setState({ picturesDialogOpen: null });
-    }
+    };
 
     private renderPicturesDialog() {
         const { picturesDialogOpen: product } = this.state;
@@ -268,7 +270,7 @@ export class ProductList extends React.PureComponent<Props, State> {
 
     private handleCloseUpdateProductDialog = () => {
         this.setState({ updateProductDialogOpen: null });
-    }
+    };
 
     private renderUpdateProductDialog() {
         const { updateProductDialogOpen: product } = this.state;

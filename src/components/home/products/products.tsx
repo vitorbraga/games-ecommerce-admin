@@ -56,7 +56,7 @@ export class Products extends React.PureComponent<Props, State> {
 
     private handleTabChange = (event: React.ChangeEvent<{}>, newValue: number) => {
         this.setState({ selectedTab: newValue });
-    }
+    };
 
     public render() {
         const { authToken } = this.props;

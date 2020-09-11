@@ -1,5 +1,5 @@
+/* eslint-disable no-underscore-dangle */
 import { compose, createStore, combineReducers, Action } from 'redux';
-// import thunk from 'redux-thunk';
 import { authenticationReducer } from './modules/authentication/reducer';
 import { userReducer } from './modules/user/reducer';
 import { persistStore, persistReducer } from 'redux-persist';
@@ -7,6 +7,7 @@ import storage from 'redux-persist/lib/storage';
 
 declare global {
     interface Window {
+      // eslint-disable-next-line no-undef
       __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: typeof compose;
     }
 }

@@ -72,15 +72,15 @@ export class Categories extends React.PureComponent<Props, State> {
                 return { categoryCreation: { ...prevState.categoryCreation, parentIds: newParentIds } };
             });
         }
-    }
+    };
 
     private handleShowNewCategory = () => {
         this.setState({ newCategory: true });
-    }
+    };
 
     private handleHideNewCategory = () => {
         this.setState({ newCategory: false });
-    }
+    };
 
     private handleSubmitCreateCategory = () => {
         const { authToken } = this.props;
@@ -100,12 +100,12 @@ export class Categories extends React.PureComponent<Props, State> {
                 this.setState({ creatingCategoryStatus: FetchStatusEnum.failure });
             }
         });
-    }
+    };
 
     private isSubmitButtonDisabled = () => {
         const { categoryCreation: { key, label }, creatingCategoryStatus } = this.state;
         return creatingCategoryStatus === FetchStatusEnum.loading || !key || !label;
-    }
+    };
 
     private handleCategorySelect = (index: number) => (categoryId: string) => {
         this.setState((prevState) => {
@@ -118,15 +118,15 @@ export class Categories extends React.PureComponent<Props, State> {
                 }
             };
         });
-    }
+    };
 
     private handleKeyChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ categoryCreation: { ...this.state.categoryCreation, key: event.target.value } });
-    }
+    };
 
     private handleLabelChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ categoryCreation: { ...this.state.categoryCreation, label: event.target.value } });
-    }
+    };
 
     private handleRemoveCategorySelect = () => {
         this.setState((prevState) => {
@@ -139,7 +139,7 @@ export class Categories extends React.PureComponent<Props, State> {
                 }
             };
         });
-    }
+    };
 
     private renderCreatingCategoryStatus() {
         const { creatingCategoryStatus } = this.state;

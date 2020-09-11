@@ -1,14 +1,8 @@
-import { Product } from '../products/model';
-
 export interface Category {
     id: string;
     key: string;
     label: string;
-    createdAt: string;
-    updatedAt: string;
-    subCategories?: Category[];
-    parent?: Category | null;
-    products?: Product[]; // FIXME
+    subCategories: Category[];
 }
 
 export type GetFullCategoriesTreeResponse = {

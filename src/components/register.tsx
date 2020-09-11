@@ -73,11 +73,11 @@ export class Register extends React.PureComponent<Props, State> {
                 this.setState({ submitStatus: FetchStatusEnum.failure, registerError: error.message });
             }
         });
-    }
+    };
 
     private handleResetSubmitStatus = () => {
         this.setState({ submitStatus: FetchStatusEnum.initial });
-    }
+    };
 
     private renderSubmitStatus() {
         const { submitStatus, registerError } = this.state;

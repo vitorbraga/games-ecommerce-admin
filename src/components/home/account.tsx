@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { User } from '../../modules/user/model';
-import { formatDateFromString } from '../../utils/date-utils';
+import { formatDateFromMilliseconds } from '../../utils/date-utils';
 
 import * as theme from './account.scss';
 
@@ -32,11 +32,11 @@ export class AccountOverview extends React.PureComponent<AccountOverviewProps, n
                     </div>
                     <div className={theme.dataRow}>
                         <div className={theme.label}>Account created at:</div>
-                        <div className={theme.value}>{formatDateFromString(user.createdAt)}</div>
+                        <div className={theme.value}>{formatDateFromMilliseconds(user.createdAt)}</div>
                     </div>
                     <div className={theme.dataRow}>
                         <div className={theme.label}>Account last updated at:</div>
-                        <div className={theme.value}>{formatDateFromString(user.updatedAt)}</div>
+                        <div className={theme.value}>{formatDateFromMilliseconds(user.updatedAt)}</div>
                     </div>
                 </div>
                 <Typography component="h2" variant="h5">

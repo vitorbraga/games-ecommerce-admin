@@ -97,35 +97,35 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
         categoryTabKey: 0
     };
 
-    private a11yProps = (index: number) => ({ id: `vertical-tab-${index}`});
+    private a11yProps = (index: number) => ({ id: `vertical-tab-${index}` });
 
     private handleOpenAccountMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
         this.setState({ anchorEl: event.currentTarget });
-    }
+    };
 
     private handleCloseAccountMenu = () => {
         this.setState({ anchorEl: null });
-    }
+    };
 
     private handleLogout = () => {
         this.props.userLogout();
         this.props.history.push('/');
-    }
+    };
 
     private handleChangeTab = (event: any, newValue: number) => {
         this.setState({ tabValue: newValue });
-    }
+    };
 
     private handleClick = (tabName: string, callback?: () => void) => () => {
         this.props.history.push(`/home#${tabName}`);
         if (callback) {
             callback();
         }
-    }
+    };
 
     private renewCategoryTabKey = () => {
         this.setState({ categoryTabKey: Date.now() });
-    }
+    };
 
     public render() {
         const { user, authToken } = this.props;
@@ -137,8 +137,8 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
                 <AppBar position="static">
                     <Toolbar variant="dense">
                         <div className={theme.hiddenSpan} />
-                        {user !== null &&
-                            <div>
+                        {user !== null
+                            && <div>
                                 <IconButton
                                     aria-label="account of current user"
                                     aria-controls="menu-appbar"
@@ -166,9 +166,9 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
                     : <div className={theme.centerContent}>
                         <Container component="main" maxWidth="xl" className={theme.mainContainer}>
                             <Paper className={theme.mainPaper}>
-                                {error &&  <ResultMessageBox type="error" message={error} />}
-                                {user !== null &&
-                                    <div className={theme.root}>
+                                {error && <ResultMessageBox type="error" message={error} />}
+                                {user !== null
+                                    && <div className={theme.root}>
                                         <Tabs
                                             orientation="vertical"
                                             variant="scrollable"
@@ -200,7 +200,7 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
                             </Paper>
                         </Container>
                     </div>
-                    }
+                }
             </div>
         );
     }

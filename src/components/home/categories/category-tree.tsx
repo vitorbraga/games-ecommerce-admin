@@ -40,7 +40,7 @@ export class CategoryTree extends React.PureComponent<Props, State> {
         if (this.props.onSelectCategory) {
             this.props.onSelectCategory(categoryId);
         }
-    }
+    };
 
     private renderCategory(category: Category): React.ReactNode {
         const { selectedCategoryId, onSelectCategory } = this.props;

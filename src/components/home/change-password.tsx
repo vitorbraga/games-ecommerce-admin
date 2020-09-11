@@ -42,7 +42,7 @@ export class ChangePassword extends React.PureComponent<ChangePasswordProps, Cha
 
     private handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
         this.setState({ [field]: event.target.value, ...resetFeedbacks } as Pick<ChangePasswordState, any>);
-    }
+    };
 
     private handleSubmit = () => {
         const { authToken, onSetUser } = this.props;
@@ -69,7 +69,7 @@ export class ChangePassword extends React.PureComponent<ChangePasswordProps, Cha
                 }
             });
         }
-    }
+    };
 
     public render() {
         const { submitError, submitLoading, updateSuccess } = this.state;
@@ -81,11 +81,11 @@ export class ChangePassword extends React.PureComponent<ChangePasswordProps, Cha
                     Change password
                 </Typography>
                 {submitError && <ResultMessageBox type="error" message={submitError} />}
-                {submitLoading &&
-                    <div className={theme.loadingBox}><CircularProgress /></div>
+                {submitLoading
+                    && <div className={theme.loadingBox}><CircularProgress /></div>
                 }
-                {updateSuccess &&
-                    <div>
+                {updateSuccess
+                    && <div>
                         <ResultMessageBox type="success">
                             Your password has been changed successfully!
                         </ResultMessageBox>
