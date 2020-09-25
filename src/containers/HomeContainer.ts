@@ -1,21 +1,21 @@
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import { AppState } from '../store';
-import { authToken } from '../modules/authentication/selector';
+import { getAuthToken } from '../modules/authentication/selector';
 import { userLogout } from '../modules/authentication/actions';
 import { Home } from '../components/home/home';
-import { user } from '../modules/user/selector';
-import { setUser } from '../modules/user/actions';
-import { User } from '../modules/user/model';
+import { getUserSession } from '../modules/user/selector';
+import { setUserSession } from '../modules/user/actions';
+import { UserSession } from '../modules/user/model';
 
 const mapStateToProps = (state: AppState) => ({
-    authToken: authToken(state.authentication),
-    user: user(state.user)
+    authToken: getAuthToken(state.authentication),
+    userSession: getUserSession(state.user)
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-    setUser: (user: User | null) => dispatch(setUser(user)),
-    userLogout: () => dispatch(userLogout())
+    onSetUserSession: (userSession: UserSession | null) => dispatch(setUserSession(userSession)),
+    onUserLogout: () => dispatch(userLogout())
 });
 
 export const HomeContainer = connect(mapStateToProps, mapDispatchToProps)(Home);

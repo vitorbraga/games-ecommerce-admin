@@ -35,8 +35,7 @@ const initialState: AppState = {
         authToken: null
     },
     user: {
-        userId: null,
-        user: null
+        userSession: null
     }
 };
 

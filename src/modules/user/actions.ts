@@ -1,15 +1,8 @@
-import { SET_USER_ID, SET_USER, ActionTypes, User } from './model';
+import { SET_USER_SESSION, ActionTypes, UserSession } from './model';
 
-export function setUserId(userId: string | null): ActionTypes {
+export function setUserSession(userSession: UserSession | null): ActionTypes {
     return {
-        type: SET_USER_ID,
-        payload: userId
-    };
-}
-
-export function setUser(user: User | null): ActionTypes {
-    return {
-        type: SET_USER,
-        payload: user
+        type: SET_USER_SESSION,
+        payload: userSession
     };
 }

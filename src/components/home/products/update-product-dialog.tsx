@@ -68,7 +68,7 @@ export class UpdateProductDialog extends React.PureComponent<Props, State> {
         } else if (updateStatus === FetchStatusEnum.failure) {
             return <ResultMessageBox type="error" message="Failed updating category. Please try again." />;
         } else if (updateStatus === FetchStatusEnum.success) {
-            return <ResultMessageBox type="success" message="Product created successfully." />;
+            return <ResultMessageBox type="success" message="Product updated successfully." />;
         }
 
         return null;

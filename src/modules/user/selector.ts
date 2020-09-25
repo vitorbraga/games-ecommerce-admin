@@ -1,5 +1,3 @@
-import { UserState, User } from './model';
+import { UserState, UserSession } from './model';
 
-export const userId = (state: UserState): string | null => state.userId;
-
-export const user = (state: UserState): User | null => state.user;
+export const getUserSession = (state: UserState): UserSession | null => state.userSession;

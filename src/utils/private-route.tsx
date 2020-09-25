@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Redirect, Route, RouteProps } from 'react-router';
 import { isAuthenticated } from '../modules/authentication/helpers';
-import { authToken } from '../modules/authentication/selector';
+import { getAuthToken } from '../modules/authentication/selector';
 import { AppState } from '../store';
 
 interface ProtectedRouteProps extends RouteProps {
@@ -27,7 +27,7 @@ class PrivateRoute extends Route<ProtectedRouteProps> {
 }
 
 const mapStateToProps = (state: AppState) => ({
-    authToken: authToken(state.authentication),
+    authToken: getAuthToken(state.authentication),
     authenticationPath: '/login'
 });
 

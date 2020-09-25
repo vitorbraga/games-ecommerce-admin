@@ -56,7 +56,7 @@ export class ProductList extends React.PureComponent<Props, State> {
     private loadProductList = () => {
         this.setState({ fetchStatus: FetchStatusEnum.loading }, async () => {
             try {
-                const products = await ProductApi.getAllProducts();
+                const products = await ProductApi.getAllProducts(this.props.authToken);
                 this.setState({ products, fetchStatus: FetchStatusEnum.success });
             } catch (error) {
                 this.setState({ fetchStatus: FetchStatusEnum.failure });

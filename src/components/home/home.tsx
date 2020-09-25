@@ -16,7 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core/styles';
 import { TypographyProps } from '@material-ui/system';
-import { User } from '../../modules/user/model';
+import { User, UserSession } from '../../modules/user/model';
 import { AccountOverview } from './account';
 import { ResultMessageBox } from '../../widgets/result-message-box';
 import { Overview } from './overview';
@@ -48,9 +48,9 @@ const CustomTab = withStyles(() => ({
 
 interface HomeProps {
     authToken: string | null;
-    user: User | null;
-    setUser: (user: User | null) => void;
-    userLogout: () => void;
+    userSession: UserSession | null;
+    onSetUser: (user: User | null) => void;
+    onUserLogout: () => void;
     history: History<LocationState>;
 }
 
@@ -108,7 +108,7 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
     };
 
     private handleLogout = () => {
-        this.props.userLogout();
+        this.props.onUserLogout();
         this.props.history.push('/');
     };
 
@@ -128,7 +128,7 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
     };
 
     public render() {
-        const { user, authToken } = this.props;
+        const { userSession, authToken } = this.props;
         const { loading, anchorEl, tabValue, error, categoryTabKey } = this.state;
 
         return (
@@ -137,7 +137,7 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
                 <AppBar position="static">
                     <Toolbar variant="dense">
                         <div className={theme.hiddenSpan} />
-                        {user !== null
+                        {userSession !== null
                             && <div>
                                 <IconButton
                                     aria-label="account of current user"
@@ -167,7 +167,7 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
                         <Container component="main" maxWidth="xl" className={theme.mainContainer}>
                             <Paper className={theme.mainPaper}>
                                 {error && <ResultMessageBox type="error" message={error} />}
-                                {user !== null
+                                {userSession !== null
                                     && <div className={theme.root}>
                                         <Tabs
                                             orientation="vertical"
@@ -193,7 +193,7 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
                                             <Products authToken={authToken!} />
                                         </TabPanel>
                                         <TabPanel value={tabValue} index={3}>
-                                            <AccountOverview user={user} />
+                                            <AccountOverview userSession={userSession} authToken={authToken!} />
                                         </TabPanel>
                                     </div>
                                 }

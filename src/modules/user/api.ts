@@ -62,3 +62,18 @@ export const getUser = async (userId: string, authToken: string): Promise<User> 
         throw new Error(errorMapper[userResponse.error]);
     }
 };
+
+export const getUserFullData = async (userId: string, authToken: string): Promise<User> => {
+    const options = {
+        headers: headersBuilder().withJwt(authToken).build()
+    };
+
+    const response: Response = await fetch(`${serverBaseUrl}/users/${userId}/full`, options);
+    const userResponse: GetUserResponse = await response.json();
+
+    if (userResponse.success) {
+        return userResponse.user;
+    } else {
+        throw new Error(errorMapper[userResponse.error]);
+    }
+};

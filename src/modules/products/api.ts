@@ -3,8 +3,12 @@ import * as Model from './model';
 import { errorMapper } from '../../utils/messages-mapper';
 import * as PictureModel from '../pictures/model';
 
-export const getAllProducts = async (): Promise<Model.Product[]> => {
-    const response: Response = await fetch(`${serverBaseUrl}/products`);
+export const getAllProducts = async (authToken: string): Promise<Model.Product[]> => {
+    const options = {
+        headers: headersBuilder().with('Content-Type', 'application/json').with('Accept', 'application/json').withJwt(authToken).build()
+    };
+
+    const response: Response = await fetch(`${serverBaseUrl}/products`, options);
     const allProductsResponse: Model.GetAllProductsResponse = await response.json();
 
     if ('error' in allProductsResponse) {

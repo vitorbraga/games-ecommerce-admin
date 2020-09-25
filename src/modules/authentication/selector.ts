@@ -1,3 +1,3 @@
 import { AuthenticationState } from './model';
 
-export const authToken = (state: AuthenticationState) => state.authToken;
+export const getAuthToken = (state: AuthenticationState) => state.authToken;

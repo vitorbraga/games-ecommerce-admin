@@ -18,15 +18,15 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { authenticate } from '../modules/authentication/api';
 import { JwtAuthToken } from '../modules/authentication/helpers';
 import { ResultMessageBox } from '../widgets/result-message-box';
-import { User } from '../modules/user/model';
+import { UserSession } from '../modules/user/model';
 import { FetchStatusEnum, FetchStatus } from '../utils/api-helper';
 
 import * as theme from './login.scss';
 
 interface Props {
     authToken: string | null;
-    setAuthenticationToken: (authToken: string | null) => void;
-    setUser: (user: User | null) => void;
+    onSetAuthenticationToken: (authToken: string | null) => void;
+    onSetUserSession: (userSession: UserSession | null) => void;
     history: History<LocationState>;
 }
 
@@ -61,8 +61,8 @@ export class Login extends React.PureComponent<Props, State> {
             try {
                 const authenticationToken = await authenticate(formData.email, formData.password);
                 const decoded = jwtDecode<JwtAuthToken>(authenticationToken);
-                this.props.setAuthenticationToken(authenticationToken);
-                this.props.setUser(decoded.user);
+                this.props.onSetAuthenticationToken(authenticationToken);
+                this.props.onSetUserSession(decoded.userSession);
 
                 this.props.history.push('/home');
             } catch (error) {

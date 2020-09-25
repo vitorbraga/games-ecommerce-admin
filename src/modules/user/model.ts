@@ -1,5 +1,4 @@
-export const SET_USER_ID = 'SET_USER_ID';
-export const SET_USER = 'SET_USER';
+export const SET_USER_SESSION = 'SET_USER_SESSION';
 
 export interface User {
     id: string;
@@ -9,6 +8,11 @@ export interface User {
     role: string;
     createdAt: number;
     updatedAt: number;
+}
+
+export interface UserSession {
+    id: string;
+    firstName: string;
 }
 
 export interface UserRegister {
@@ -51,12 +55,10 @@ export type GetUserResponse = {
     error: string;
 };
 
-interface SetUserIdAction { type: typeof SET_USER_ID, payload: string | null }
-interface SetUserAction { type: typeof SET_USER, payload: User | null }
+interface SetUserSessionAction { type: typeof SET_USER_SESSION, payload: UserSession | null }
 
 export interface UserState {
-    userId: string | null;
-    user: User | null;
+    userSession: UserSession | null;
 }
 
-export type ActionTypes = SetUserIdAction | SetUserAction;
+export type ActionTypes = SetUserSessionAction;
