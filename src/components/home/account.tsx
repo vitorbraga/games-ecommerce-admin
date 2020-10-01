@@ -1,8 +1,11 @@
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { User, UserSession } from '../../modules/user/model';
 import * as UserApi from '../../modules/user/api';
 import { formatDateFromMilliseconds } from '../../utils/date-utils';
+import { FetchState, FetchStatusEnum } from '../../utils/api-helper';
+import { ResultMessageBox } from '../../widgets/result-message-box';
 
 import * as theme from './account.scss';
 
@@ -12,29 +15,31 @@ interface Props {
 }
 
 export const AccountOverview: React.FC<Props> = ({ userSession, authToken }) => {
-    const [userFullData, setUserFullData] = React.useState<User | null>(null);
+    const [fetchState, setFetchState] = React.useState<FetchState<User | null>>({ status: FetchStatusEnum.initial, fetchError: null, data: null });
 
     React.useEffect(() => {
         const fetchUser = async () => {
             try {
-                // TODO Improve this code, putting all together in the same object to make one single call
-                // setLoading(true);
+                setFetchState({ status: FetchStatusEnum.loading, fetchError: null, data: null });
                 const userFullData = await UserApi.getUserFullData(userSession.id, authToken);
-                setUserFullData(userFullData);
-                // setLoading(false);
+                setFetchState({ data: userFullData, status: FetchStatusEnum.success, fetchError: null });
             } catch (error) {
-                // setFetchError(error.message);
+                setFetchState({ data: null, status: FetchStatusEnum.failure, fetchError: error.message });
             }
         };
 
         fetchUser();
     }, []);
 
+    const { data: userFullData, status, fetchError } = fetchState;
+
     return (
         <div className={theme.contentBox}>
             <Typography component="h2" variant="h5">
                 Account overview
             </Typography>
+            {status === FetchStatusEnum.loading && <div className={theme.loadingWrapper}><CircularProgress /></div>}
+            {status === FetchStatusEnum.failure && <ResultMessageBox type="error" message={fetchError!} />}
             {userFullData
                 && <div className={theme.dataContent}>
                     <div className={theme.dataRow}>
@@ -59,9 +64,6 @@ export const AccountOverview: React.FC<Props> = ({ userSession, authToken }) => 
                     </div>
                 </div>
             }
-            <Typography component="h2" variant="h5" style={{ marginTop: '20px' }}>
-                Security (change password)
-            </Typography>
         </div>
     );
 };

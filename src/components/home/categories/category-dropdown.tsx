@@ -16,6 +16,8 @@ interface State {
     values: Category[];
 }
 
+export const UNSELECTED_PARENT = '0';
+
 export class CategoryDropdown extends React.PureComponent<Props, State> {
     public state: State = {
         parentId: this.props.parentId,
@@ -24,7 +26,7 @@ export class CategoryDropdown extends React.PureComponent<Props, State> {
 
     public async componentDidMount() {
         const { parentId } = this.props;
-        const result = await CategoriesApi.getSubCategoriesByParentId(parentId);
+        const result = await CategoriesApi.getSubCategoriesByParentId(parentId !== UNSELECTED_PARENT ? parentId : null);
         this.setState({ values: result });
     }
 

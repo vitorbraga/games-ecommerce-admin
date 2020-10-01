@@ -10,6 +10,7 @@ import * as theme from './category-tree.scss';
 interface Props {
     selectedCategoryId?: string;
     onSelectCategory?: (categoryId: string) => void;
+    onDelete?: (category: Category) => void;
 }
 
 interface State {
@@ -42,20 +43,25 @@ export class CategoryTree extends React.PureComponent<Props, State> {
         }
     };
 
+    private handleDeleteCategory = (category: Category) => () => {
+        if (this.props.onDelete) {
+            this.props.onDelete(category);
+        }
+    };
+
     private renderCategory(category: Category): React.ReactNode {
-        const { selectedCategoryId, onSelectCategory } = this.props;
+        const { selectedCategoryId, onSelectCategory, onDelete } = this.props;
         const { id, subCategories, label } = category;
 
         return (
             <div className={theme.categoryItem} key={`categ-${id}`}>
-                {onSelectCategory
-                    ? <Chip
-                        label={label}
-                        color={selectedCategoryId === category.id ? 'primary' : 'secondary'}
-                        onClick={this.handleSelectCategory(category.id)}
-                    />
-                    : <div>{label}</div>
-                }
+                <Chip
+                    label={label}
+                    color={selectedCategoryId === category.id ? 'primary' : 'secondary'}
+                    onClick={onSelectCategory && this.handleSelectCategory(category.id)}
+                    onDelete={onDelete && this.handleDeleteCategory(category)}
+                    title="Delete sub categories"
+                />
                 {subCategories
                     && subCategories.length > 0
                     && subCategories.map((item) => {

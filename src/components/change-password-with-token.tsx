@@ -12,9 +12,9 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { errorMapper } from '../utils/messages-mapper';
 import { checkValidPasswordResetToken, changePasswordWithToken } from '../modules/authentication/api';
 import { ResultMessageBox } from '../widgets/result-message-box';
+import { appBaseUrl } from '../utils/api-helper';
 
 import * as theme from './change-password-with-token.scss';
-import { appBaseUrl } from '../utils/api-helper';
 
 interface MatchParams {
     token: string;

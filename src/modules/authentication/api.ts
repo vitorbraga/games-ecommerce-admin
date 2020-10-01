@@ -1,4 +1,4 @@
-import { LoginResponse, PasswordRecoveryResponse, CheckPasswordTokenResponse, ChangePasswordTokenResponse, ChangePasswordResponse } from './model';
+import * as Model from './model';
 import { headersBuilder, serverBaseUrl } from '../../utils/api-helper';
 import { assertType } from 'typescript-is';
 import { errorMapper } from '../../utils/messages-mapper';
@@ -13,7 +13,7 @@ export const authenticate = async (username: string, password: string): Promise<
 
     const response: Response = await fetch(`${serverBaseUrl}/auth/admin/login`, options);
     const data = await response.json();
-    const loginResponse: LoginResponse = assertType<LoginResponse>(data);
+    const loginResponse: Model.LoginResponse = assertType<Model.LoginResponse>(data);
 
     if (loginResponse.success) {
         return loginResponse.jwt;
@@ -31,7 +31,7 @@ export const passwordRecovery = async (email: string): Promise<void> => {
 
     const response: Response = await fetch(`${serverBaseUrl}/auth/password-recovery`, options);
     const data = await response.json();
-    const passwordRecoveryResponse: PasswordRecoveryResponse = assertType<PasswordRecoveryResponse>(data);
+    const passwordRecoveryResponse: Model.PasswordRecoveryResponse = assertType<Model.PasswordRecoveryResponse>(data);
 
     if (!passwordRecoveryResponse.success) {
         throw new Error(errorMapper[passwordRecoveryResponse.error]);
@@ -47,7 +47,7 @@ export const changePasswordWithToken = async (newPassword: string, token: string
 
     const response: Response = await fetch(`${serverBaseUrl}/auth/password-recovery`, options);
     const data = await response.json();
-    const changePasswordResponse: ChangePasswordTokenResponse = assertType<ChangePasswordTokenResponse>(data);
+    const changePasswordResponse: Model.ChangePasswordTokenResponse = assertType<Model.ChangePasswordTokenResponse>(data);
 
     if (!changePasswordResponse.success) {
         throw new Error(errorMapper[changePasswordResponse.error]);
@@ -67,7 +67,7 @@ export const changePassword = async (currentPassword: string, newPassword: strin
 
     const response = await fetch(`${serverBaseUrl}/auth/change-password`, options);
     const data = await response.json();
-    const changePasswordResponse: ChangePasswordResponse = assertType<ChangePasswordResponse>(data);
+    const changePasswordResponse: Model.ChangePasswordResponse = assertType<Model.ChangePasswordResponse>(data);
 
     if (changePasswordResponse.success) {
         return changePasswordResponse.user;
@@ -83,7 +83,7 @@ export const checkValidPasswordResetToken = async (token: string, userId: string
 
     const response = await fetch(`${serverBaseUrl}/auth/check-password-token/${token}/${userId}`, options);
     const data = await response.json();
-    const checkPasswordResponse: CheckPasswordTokenResponse = assertType<CheckPasswordTokenResponse>(data);
+    const checkPasswordResponse: Model.CheckPasswordTokenResponse = assertType<Model.CheckPasswordTokenResponse>(data);
 
     if (!checkPasswordResponse.success) {
         throw new Error(errorMapper[checkPasswordResponse.error]);

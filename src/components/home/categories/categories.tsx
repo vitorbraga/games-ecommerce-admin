@@ -7,10 +7,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Button from '@material-ui/core/Button';
 import { Category } from '../../../modules/category/model';
 import * as CategoriesApi from '../../../modules/category/api';
-import { CategoryDropdown } from './category-dropdown';
+import { CategoryDropdown, UNSELECTED_PARENT } from './category-dropdown';
 import { FetchStatus, FetchStatusEnum } from '../../../utils/api-helper';
 import { ResultMessageBox } from '../../../widgets/result-message-box';
 import { CategoryTree } from './category-tree';
+import { ConfirmationDialog } from '../../../widgets/confirmation-dialog';
 
 import * as theme from './categories.scss';
 
@@ -28,12 +29,14 @@ interface State {
     categories: Category[];
     loadingMapStatus: FetchStatus;
     creatingCategoryStatus: FetchStatus;
+    deletingCategoryStatus: FetchStatus;
     newCategory: boolean;
+    categoryTreeKey: number;
     categoryCreation: CategoryCreation;
+    deleteCategoryDialogOpen: Category | null;
 }
 
 export class Categories extends React.PureComponent<Props, State> {
-    private static unselectedParent = '0';
     private static emptyCategoryCreation = {
         parentIds: [],
         key: '',
@@ -44,8 +47,11 @@ export class Categories extends React.PureComponent<Props, State> {
         categories: [],
         loadingMapStatus: FetchStatusEnum.initial,
         creatingCategoryStatus: FetchStatusEnum.initial,
+        deletingCategoryStatus: FetchStatusEnum.initial,
         newCategory: false,
-        categoryCreation: { ...Categories.emptyCategoryCreation }
+        categoryTreeKey: 0,
+        categoryCreation: { ...Categories.emptyCategoryCreation },
+        deleteCategoryDialogOpen: null
     };
 
     public componentDidMount() {
@@ -65,10 +71,10 @@ export class Categories extends React.PureComponent<Props, State> {
     }
 
     private handleClickChooseParent = () => {
-        if (!this.state.categoryCreation.parentIds.includes(Categories.unselectedParent)) {
+        if (!this.state.categoryCreation.parentIds.includes(UNSELECTED_PARENT)) {
             this.setState((prevState) => {
                 const newParentIds = [...prevState.categoryCreation.parentIds];
-                newParentIds.push(Categories.unselectedParent);
+                newParentIds.push(UNSELECTED_PARENT);
                 return { categoryCreation: { ...prevState.categoryCreation, parentIds: newParentIds } };
             });
         }
@@ -89,11 +95,11 @@ export class Categories extends React.PureComponent<Props, State> {
         this.setState({ creatingCategoryStatus: FetchStatusEnum.loading }, async () => {
             try {
                 await CategoriesApi.createCategory(authToken, parentIds[parentIds.length - 1], key, label);
-                const categories = await CategoriesApi.getFullCategoryTrees();
+
                 this.setState({
-                    categories,
                     creatingCategoryStatus: FetchStatusEnum.success,
                     newCategory: false,
+                    categoryTreeKey: Date.now(),
                     categoryCreation: { ...Categories.emptyCategoryCreation }
                 });
             } catch (error) {
@@ -111,6 +117,7 @@ export class Categories extends React.PureComponent<Props, State> {
         this.setState((prevState) => {
             const newParentIds = [...prevState.categoryCreation.parentIds];
             newParentIds[index] = categoryId;
+
             return {
                 categoryCreation: {
                     ...prevState.categoryCreation,
@@ -161,7 +168,47 @@ export class Categories extends React.PureComponent<Props, State> {
 
     private isNewCategoryButtonDisabled() {
         const { categoryCreation: { parentIds }, newCategory } = this.state;
-        return newCategory || parentIds.includes(Categories.unselectedParent);
+        return newCategory || parentIds.includes(UNSELECTED_PARENT);
+    }
+
+    private handleOpenDeleteCategoryDialog = (category: Category) => {
+        this.setState({ deleteCategoryDialogOpen: category });
+    };
+
+    private handleCloseDeleteDialog = () => {
+        this.setState({ deleteCategoryDialogOpen: null });
+    };
+
+    private handleConfirmDelete = async () => {
+        const { deleteCategoryDialogOpen: category } = this.state;
+        if (category !== null) {
+            try {
+                await CategoriesApi.deleteSubCategories(this.props.authToken, category.id);
+                this.setState({
+                    deleteCategoryDialogOpen: null,
+                    categoryTreeKey: Date.now(),
+                    deletingCategoryStatus: FetchStatusEnum.success
+                });
+            } catch (error) {
+                this.setState({ deletingCategoryStatus: FetchStatusEnum.failure });
+            }
+        }
+    };
+
+    private renderDeleteDialog() {
+        const { deleteCategoryDialogOpen: category } = this.state;
+
+        if (category) {
+            return (
+                <ConfirmationDialog
+                    open={!!category}
+                    onClose={this.handleCloseDeleteDialog}
+                    onConfirm={this.handleConfirmDelete}
+                >
+                    Are you sure you want to remove all the sub categories of <b>{category.label} ({category.key})</b>?
+                </ConfirmationDialog>
+            );
+        }
     }
 
     private renderCreationWizard() {
@@ -172,18 +219,17 @@ export class Categories extends React.PureComponent<Props, State> {
                 {this.renderCreatingCategoryStatus()}
                 <div className={theme.parentsWrapper}>
                     {parentIds.map((parentId, index) => {
-                        let realParentId = parentId;
-                        if (index > 0 && index === parentIds.length - 1 && parentId === Categories.unselectedParent) {
-                            realParentId = parentIds[index - 1];
+                        let itemParentId = parentId;
+                        if (index > 0 && index === parentIds.length - 1 && parentId === UNSELECTED_PARENT) {
+                            itemParentId = parentIds[index - 1];
                         }
 
                         return (
-                            <div className={theme.categorySelectWrapper}>
+                            <div className={theme.categorySelectWrapper} key={`category-${index}`}>
                                 <div className={theme.selectLeft}>
                                     <CategoryDropdown
-                                        key={`category-select-${index}`}
                                         index={index}
-                                        parentId={realParentId}
+                                        parentId={itemParentId}
                                         selectedValue={parentId}
                                         onChangeCategory={this.handleCategorySelect(index)}
                                     />
@@ -232,6 +278,20 @@ export class Categories extends React.PureComponent<Props, State> {
         );
     }
 
+    private renderSubmitStatus() {
+        const { deletingCategoryStatus } = this.state;
+
+        if (deletingCategoryStatus === FetchStatusEnum.loading) {
+            return <div className={theme.loadingCircle}><CircularProgress /></div>;
+        } else if (deletingCategoryStatus === FetchStatusEnum.failure) {
+            return <ResultMessageBox type="error" message="Failed deleting sub categories." />;
+        } else if (deletingCategoryStatus === FetchStatusEnum.success) {
+            return <ResultMessageBox type="success" message="Sub categories deleted successfully." />;
+        }
+
+        return null;
+    }
+
     public render() {
         return (
             <div className={theme.contentBox}>
@@ -239,7 +299,12 @@ export class Categories extends React.PureComponent<Props, State> {
                     Category map
                 </Typography>
                 <div>
-                    <CategoryTree />
+                    <p><em>Currently, it's only possible to delete the sub categories of a category. Deleting the category itself will be implemented later.</em></p>
+                    {this.renderSubmitStatus()}
+                    <CategoryTree
+                        key={`tree-${this.state.categoryTreeKey}`}
+                        onDelete={this.handleOpenDeleteCategoryDialog}
+                    />
                 </div>
                 <hr className={theme.divider} />
                 <Typography component="h6" variant="h6">
@@ -248,6 +313,7 @@ export class Categories extends React.PureComponent<Props, State> {
                 <div>
                     {this.renderCreationWizard()}
                 </div>
+                {this.renderDeleteDialog()}
             </div>
         );
     }

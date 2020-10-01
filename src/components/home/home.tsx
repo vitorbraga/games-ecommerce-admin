@@ -1,10 +1,11 @@
 import * as React from 'react';
+import { connect } from 'react-redux';
+import { Dispatch } from 'redux';
 import { History, LocationState } from 'history';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import IconButton from '@material-ui/core/IconButton';
 import AppBar from '@material-ui/core/AppBar';
@@ -16,14 +17,18 @@ import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import { withStyles } from '@material-ui/core/styles';
 import { TypographyProps } from '@material-ui/system';
-import { User, UserSession } from '../../modules/user/model';
+import { UserSession } from '../../modules/user/model';
 import { AccountOverview } from './account';
-import { ResultMessageBox } from '../../widgets/result-message-box';
 import { Overview } from './overview';
 import { Categories } from './categories/categories';
 import { Products } from './products/products';
+import { AppState } from '../../store';
+import { getAuthToken } from '../../modules/authentication/selector';
+import { userLogout } from '../../modules/authentication/actions';
+import { getUserSession } from '../../modules/user/selector';
 
 import * as theme from './home.scss';
+import { ChangePassword } from './change-password';
 
 const TabPanel = (props: TabPanelProps) => {
     const { children, value, index, ...other } = props;
@@ -46,19 +51,16 @@ const CustomTab = withStyles(() => ({
     wrapper: { alignItems: 'start' }
 }))(Tab);
 
-interface HomeProps {
+interface Props {
     authToken: string | null;
     userSession: UserSession | null;
-    onSetUser: (user: User | null) => void;
     onUserLogout: () => void;
     history: History<LocationState>;
 }
 
-interface HomeState {
-    loading: boolean;
+interface State {
     anchorEl: Element | null;
     tabValue: number;
-    error: string;
     categoryTabKey: number;
 }
 
@@ -68,13 +70,14 @@ interface TabPanelProps extends TypographyProps {
     children: React.ReactNode;
 }
 
-type TabsKeys = '' | 'account' | 'categories' | 'products';
+type TabsKeys = '' | 'account' | 'categories' | 'products' | 'change-password';
 
 const tabsMapper = {
     '': 0,
     'categories': 1,
     'products': 2,
-    'account': 3
+    'account': 3,
+    'change-password': 4
 };
 
 function getTabValue(): number {
@@ -88,12 +91,10 @@ function getTabValue(): number {
     return 0;
 }
 
-export class Home extends React.PureComponent<HomeProps, HomeState> {
-    public state: HomeState = {
-        loading: false,
+class Home extends React.PureComponent<Props, State> {
+    public state: State = {
         anchorEl: null,
         tabValue: getTabValue(),
-        error: '',
         categoryTabKey: 0
     };
 
@@ -129,7 +130,7 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
 
     public render() {
         const { userSession, authToken } = this.props;
-        const { loading, anchorEl, tabValue, error, categoryTabKey } = this.state;
+        const { anchorEl, tabValue, categoryTabKey } = this.state;
 
         return (
             <div className={theme.fullContainer}>
@@ -159,49 +160,58 @@ export class Home extends React.PureComponent<HomeProps, HomeState> {
                         }
                     </Toolbar>
                 </AppBar>
-                {loading
-                    ? <div className={theme.loadingBox}>
-                        <CircularProgress size={60} />
-                    </div>
-                    : <div className={theme.centerContent}>
-                        <Container component="main" maxWidth="xl" className={theme.mainContainer}>
-                            <Paper className={theme.mainPaper}>
-                                {error && <ResultMessageBox type="error" message={error} />}
-                                {userSession !== null
-                                    && <div className={theme.root}>
-                                        <Tabs
-                                            orientation="vertical"
-                                            variant="scrollable"
-                                            value={tabValue}
-                                            onChange={this.handleChangeTab}
-                                            className={theme.verticalTabs}
-                                            centered={false}
-                                            indicatorColor="primary"
-                                        >
-                                            <CustomTab label="Overview" {...this.a11yProps(0)} onClick={this.handleClick('')} />
-                                            <CustomTab label="Categories" {...this.a11yProps(1)} onClick={this.handleClick('categories', this.renewCategoryTabKey)} />
-                                            <CustomTab label="Products" {...this.a11yProps(2)} onClick={this.handleClick('products')} />
-                                            <CustomTab label="Account" {...this.a11yProps(3)} onClick={this.handleClick('account')} />
-                                        </Tabs>
-                                        <TabPanel value={tabValue} index={0}>
-                                            <Overview />
-                                        </TabPanel>
-                                        <TabPanel value={tabValue} index={1}>
-                                            <Categories authToken={authToken!} key={categoryTabKey} />
-                                        </TabPanel>
-                                        <TabPanel value={tabValue} index={2}>
-                                            <Products authToken={authToken!} />
-                                        </TabPanel>
-                                        <TabPanel value={tabValue} index={3}>
-                                            <AccountOverview userSession={userSession} authToken={authToken!} />
-                                        </TabPanel>
-                                    </div>
-                                }
-                            </Paper>
-                        </Container>
-                    </div>
-                }
+                <div className={theme.centerContent}>
+                    <Container component="main" maxWidth="xl" className={theme.mainContainer}>
+                        <Paper className={theme.mainPaper}>
+                            {userSession !== null
+                                && <div className={theme.root}>
+                                    <Tabs
+                                        orientation="vertical"
+                                        variant="scrollable"
+                                        value={tabValue}
+                                        onChange={this.handleChangeTab}
+                                        className={theme.verticalTabs}
+                                        centered={false}
+                                        indicatorColor="primary"
+                                    >
+                                        <CustomTab label="Overview" {...this.a11yProps(0)} onClick={this.handleClick('')} />
+                                        <CustomTab label="Categories" {...this.a11yProps(1)} onClick={this.handleClick('categories', this.renewCategoryTabKey)} />
+                                        <CustomTab label="Products" {...this.a11yProps(2)} onClick={this.handleClick('products')} />
+                                        <CustomTab label="Account" {...this.a11yProps(3)} onClick={this.handleClick('account')} />
+                                        <CustomTab label="Change password" {...this.a11yProps(4)} onClick={this.handleClick('change-password')} />
+                                    </Tabs>
+                                    <TabPanel value={tabValue} index={0}>
+                                        <Overview />
+                                    </TabPanel>
+                                    <TabPanel value={tabValue} index={1}>
+                                        <Categories authToken={authToken!} key={categoryTabKey} />
+                                    </TabPanel>
+                                    <TabPanel value={tabValue} index={2}>
+                                        <Products authToken={authToken!} />
+                                    </TabPanel>
+                                    <TabPanel value={tabValue} index={3}>
+                                        <AccountOverview userSession={userSession} authToken={authToken!} />
+                                    </TabPanel>
+                                    <TabPanel value={tabValue} index={4}>
+                                        <ChangePassword userSession={userSession} authToken={authToken!} />
+                                    </TabPanel>
+                                </div>
+                            }
+                        </Paper>
+                    </Container>
+                </div>
             </div>
         );
     }
 }
+
+const mapStateToProps = (state: AppState) => ({
+    authToken: getAuthToken(state.authentication),
+    userSession: getUserSession(state.user)
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    onUserLogout: () => dispatch(userLogout())
+});
+
+export const HomeContainer = connect(mapStateToProps, mapDispatchToProps)(Home);

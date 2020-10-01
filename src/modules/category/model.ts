@@ -28,3 +28,10 @@ export type CreateCategoryResponse = {
     success: false;
     error: string;
 };
+
+export type DeleteCategoryResponse = {
+    success: boolean;
+} | {
+    success: false;
+    error: string;
+};

@@ -16,6 +16,7 @@ import { CreateProductBody } from '../../../modules/products/model';
 import { ResultMessageBox } from '../../../widgets/result-message-box';
 import { ValidationError } from '../../../utils/messages-mapper';
 import { checkEmptyCategoryId } from '../../../utils/validators';
+import { UNSELECTED_PARENT } from '../categories/category-dropdown';
 
 import * as theme from './create-product.scss';
 
@@ -49,7 +50,7 @@ export class CreateProduct extends React.PureComponent<Props, State> {
         price: '',
         quantityInStock: '',
         tags: '',
-        categoryId: '0'
+        categoryId: UNSELECTED_PARENT
     };
 
     private validationSchema = Yup.object().shape({

@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Home } from './components/Home';
 import { About } from './components/About';
-import { LoginContainer } from './containers/LoginContainer';
 import { Provider } from 'react-redux';
 import { store, persistor } from './store';
 import { createMuiTheme, MuiThemeProvider } from '@material-ui/core';
@@ -11,9 +10,10 @@ import { Register } from './components/register';
 import { Page404 } from './components/page-404';
 import { RegisterSuccess } from './components/register-success';
 import { PrivateRouteContainer } from './utils/private-route';
-import { HomeContainer } from './containers/HomeContainer';
 import { PasswordRecovery } from './components/password-recovery';
 import { ChangePasswordWithToken } from './components/change-password-with-token';
+import { HomeContainer } from './components/home/home';
+import { LoginContainer } from './components/login';
 
 const theme = createMuiTheme({
     palette: {

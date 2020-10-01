@@ -3,13 +3,13 @@ import * as Yup from 'yup';
 import { Formik, Form } from 'formik';
 import { History, LocationState } from 'history';
 import * as jwtDecode from 'jwt-decode';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
@@ -20,11 +20,13 @@ import { JwtAuthToken } from '../modules/authentication/helpers';
 import { ResultMessageBox } from '../widgets/result-message-box';
 import { UserSession } from '../modules/user/model';
 import { FetchStatusEnum, FetchStatus } from '../utils/api-helper';
+import { AppState } from '../store';
+import { setAuthToken } from '../modules/authentication/actions';
+import { setUserSession } from '../modules/user/actions';
 
 import * as theme from './login.scss';
 
 interface Props {
-    authToken: string | null;
     onSetAuthenticationToken: (authToken: string | null) => void;
     onSetUserSession: (userSession: UserSession | null) => void;
     history: History<LocationState>;
@@ -32,7 +34,7 @@ interface Props {
 
 interface State {
     submitStatus: FetchStatus;
-    loginError: string | null | undefined;
+    loginError: string | null;
 }
 
 interface FormData {
@@ -40,7 +42,7 @@ interface FormData {
     password: string;
 }
 
-export class Login extends React.PureComponent<Props, State> {
+class Login extends React.PureComponent<Props, State> {
     public state: State = {
         submitStatus: FetchStatusEnum.initial,
         loginError: null
@@ -140,10 +142,6 @@ export class Login extends React.PureComponent<Props, State> {
                                                 />
                                             </Grid>
                                         </Grid>
-                                        <FormControlLabel
-                                            control={<Checkbox value="remember" color="primary" />}
-                                            label="Remember me"
-                                        />
                                         <Button
                                             type="submit"
                                             fullWidth
@@ -161,7 +159,7 @@ export class Login extends React.PureComponent<Props, State> {
                                             </Grid>
                                             <Grid item>
                                                 <Link to={'/register'}>
-                                                    Don't have an account? Sign Up
+                                                    Admin registration
                                                 </Link>
                                             </Grid>
                                         </Grid>
@@ -175,3 +173,12 @@ export class Login extends React.PureComponent<Props, State> {
         );
     }
 }
+
+const mapStateToProps = (state: AppState) => ({});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+    onSetAuthenticationToken: (authToken: string | null) => dispatch(setAuthToken(authToken)),
+    onSetUserSession: (userSession: UserSession | null) => dispatch(setUserSession(userSession))
+});
+
+export const LoginContainer = connect(mapStateToProps, mapDispatchToProps)(Login);

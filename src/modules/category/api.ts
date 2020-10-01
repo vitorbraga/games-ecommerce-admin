@@ -13,8 +13,8 @@ export const getFullCategoryTrees = async (): Promise<Model.Category[]> => {
     }
 };
 
-export const getSubCategoriesByParentId = async (parentId: string): Promise<Model.Category[]> => {
-    const response: Response = await fetch(`${serverBaseUrl}/categories/parent/${parentId}`);
+export const getSubCategoriesByParentId = async (parentId: string | null): Promise<Model.Category[]> => {
+    const response: Response = await fetch(`${serverBaseUrl}/categories/parent/${parentId || 'none'}`);
     const subCategoriesResponse: Model.GetSubCategoriesByParentIdResponse = await response.json();
 
     if ('error' in subCategoriesResponse) {
@@ -38,5 +38,19 @@ export const createCategory = async (authToken: string, parentId: string, key: s
         throw new Error(errorMapper[createCategoryResponse.error]);
     } else {
         return createCategoryResponse.category;
+    }
+};
+
+export const deleteSubCategories = async (authToken: string, parentId: string): Promise<void> => {
+    const options = {
+        headers: headersBuilder().with('Content-Type', 'application/json').with('Accept', 'application/json').withJwt(authToken).build(),
+        method: 'DELETE'
+    };
+
+    const response: Response = await fetch(`${serverBaseUrl}/categories/sub-categories/${parentId}`, options);
+    const deleteCategoryResponse: Model.DeleteCategoryResponse = await response.json();
+
+    if ('error' in deleteCategoryResponse) {
+        throw new Error(errorMapper[deleteCategoryResponse.error]);
     }
 };

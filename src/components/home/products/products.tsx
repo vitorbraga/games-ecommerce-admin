@@ -4,9 +4,9 @@ import { CreateProduct } from './create-product';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Box from '@material-ui/core/Box';
 
 import * as theme from './products.scss';
-import Box from '@material-ui/core/Box';
 
 interface Props {
     authToken: string;
