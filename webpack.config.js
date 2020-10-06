@@ -77,7 +77,7 @@ module.exports = {
         new CircularDependencyPlugin({
             exclude: /node_modules/,
             failOnError: true
-        }),
-        new webpack.DefinePlugin(envKeys)
+        })
+        // new webpack.DefinePlugin(envKeys)
     ]
 };
