@@ -44,6 +44,10 @@ export const errorMapper: UserMessage = {
     CREATE_PRODUCT_REQUIRED_FIELD: 'This field is required.'
 };
 
+export function getErrorMessage(key: string) {
+    return errorMapper[key] || key;
+}
+
 export const successMapper: UserMessage = {
     USER_UPDATED: 'User information updated successfully.',
     PASSWORD_RESET_EMAIL_SENT: 'We sent a password reset link to your email address, which allows you to reset your password.'

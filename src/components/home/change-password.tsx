@@ -8,10 +8,10 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { ResultMessageBox } from '../../widgets/result-message-box';
-// import { errorMapper } from '../../utils/messages-mapper';
+import { errorMapper } from '../../utils/messages-mapper';
 import { UserSession } from '../../modules/user/model';
 import { changePassword } from '../../modules/authentication/api';
-// import { checkPasswordComplexity } from '../../utils/validators';
+import { checkPasswordComplexity } from '../../utils/validators';
 import { FetchStatus, FetchStatusEnum } from '../../utils/api-helper';
 
 import * as theme from './change-password.scss';
@@ -46,14 +46,14 @@ export class ChangePassword extends React.PureComponent<Props, State> {
 
     private validationSchema = Yup.object().shape({
         currentPassword: Yup.string()
-            .required('Current password is required'),
-        // .test('password-complexity', errorMapper.REGISTER_PASSWORD_COMPLEXITY, checkPasswordComplexity),
+            .required('Current password is required')
+            .test('password-complexity', errorMapper.REGISTER_PASSWORD_COMPLEXITY, checkPasswordComplexity),
         newPassword: Yup.string()
-            .required('New password is required'),
-        // .test('password-complexity', errorMapper.REGISTER_PASSWORD_COMPLEXITY, checkPasswordComplexity),
+            .required('New password is required')
+            .test('password-complexity', errorMapper.REGISTER_PASSWORD_COMPLEXITY, checkPasswordComplexity),
         newPasswordConfirmation: Yup.string()
             .required('New password confirmation is required')
-            // .test('password-complexity', errorMapper.REGISTER_PASSWORD_COMPLEXITY, checkPasswordComplexity)
+            .test('password-complexity', errorMapper.REGISTER_PASSWORD_COMPLEXITY, checkPasswordComplexity)
             .oneOf([Yup.ref('newPassword'), ''], 'New Password and New Password Confirmation must match.')
     });
 

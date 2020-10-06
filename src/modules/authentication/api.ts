@@ -1,7 +1,7 @@
 import * as Model from './model';
 import { headersBuilder, serverBaseUrl } from '../../utils/api-helper';
 import { assertType } from 'typescript-is';
-import { errorMapper } from '../../utils/messages-mapper';
+import { getErrorMessage } from '../../utils/messages-mapper';
 import { User } from '../user/model';
 
 export const authenticate = async (username: string, password: string): Promise<string> => {
@@ -18,7 +18,7 @@ export const authenticate = async (username: string, password: string): Promise<
     if (loginResponse.success) {
         return loginResponse.jwt;
     } else {
-        throw new Error(errorMapper[loginResponse.error]);
+        throw new Error(getErrorMessage(loginResponse.error));
     }
 };
 
@@ -34,7 +34,7 @@ export const passwordRecovery = async (email: string): Promise<void> => {
     const passwordRecoveryResponse: Model.PasswordRecoveryResponse = assertType<Model.PasswordRecoveryResponse>(data);
 
     if (!passwordRecoveryResponse.success) {
-        throw new Error(errorMapper[passwordRecoveryResponse.error]);
+        throw new Error(getErrorMessage(passwordRecoveryResponse.error));
     }
 };
 
@@ -50,7 +50,7 @@ export const changePasswordWithToken = async (newPassword: string, token: string
     const changePasswordResponse: Model.ChangePasswordTokenResponse = assertType<Model.ChangePasswordTokenResponse>(data);
 
     if (!changePasswordResponse.success) {
-        throw new Error(errorMapper[changePasswordResponse.error]);
+        throw new Error(getErrorMessage(changePasswordResponse.error));
     }
 };
 
@@ -72,7 +72,7 @@ export const changePassword = async (currentPassword: string, newPassword: strin
     if (changePasswordResponse.success) {
         return changePasswordResponse.user;
     } else {
-        throw new Error(errorMapper[changePasswordResponse.error]);
+        throw new Error(getErrorMessage(changePasswordResponse.error));
     }
 };
 
@@ -86,6 +86,6 @@ export const checkValidPasswordResetToken = async (token: string, userId: string
     const checkPasswordResponse: Model.CheckPasswordTokenResponse = assertType<Model.CheckPasswordTokenResponse>(data);
 
     if (!checkPasswordResponse.success) {
-        throw new Error(errorMapper[checkPasswordResponse.error]);
+        throw new Error(getErrorMessage(checkPasswordResponse.error));
     }
 };

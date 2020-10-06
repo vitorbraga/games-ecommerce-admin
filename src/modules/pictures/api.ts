@@ -1,6 +1,6 @@
 import { serverBaseUrl, headersBuilder } from '../../utils/api-helper';
 import * as Model from './model';
-import { errorMapper } from '../../utils/messages-mapper';
+import { getErrorMessage } from '../../utils/messages-mapper';
 
 export const deletePicture = async (authToken: string, pictureId: string): Promise<void> => {
     const options = {
@@ -12,6 +12,6 @@ export const deletePicture = async (authToken: string, pictureId: string): Promi
     const deletePictureResponse: Model.DeletePictureResponse = await response.json();
 
     if ('error' in deletePictureResponse) {
-        throw new Error(errorMapper[deletePictureResponse.error]);
+        throw new Error(getErrorMessage(deletePictureResponse.error));
     }
 };

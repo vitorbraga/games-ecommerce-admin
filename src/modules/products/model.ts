@@ -28,10 +28,6 @@ export interface Review {
     rating: number;
 }
 
-export interface UserProduct { // TODO
-    id: string;
-}
-
 export type GetAllProductsResponse = {
     success: boolean;
     products: Product[];

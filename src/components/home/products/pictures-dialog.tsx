@@ -9,7 +9,7 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import * as Model from '../../../modules/products/model';
-import { FetchStatus, FetchStatusEnum, serverBaseUrl } from '../../../utils/api-helper';
+import { FetchStatus, FetchStatusEnum, getProductPictureUrl } from '../../../utils/api-helper';
 import * as ProductApi from '../../../modules/products/api';
 import * as PictureApi from '../../../modules/pictures/api';
 import { ResultMessageBox } from '../../../widgets/result-message-box';
@@ -70,10 +70,6 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
         }
 
         return null;
-    }
-
-    private generatePictureURL(fileName: string) {
-        return `${serverBaseUrl}/public/product-pictures/${fileName}`;
     }
 
     private handleOpenDeleteDialog = (picture: PictureModel.Picture) => () => {
@@ -149,7 +145,7 @@ export class PicturesDialog extends React.PureComponent<Props, State> {
             contentBody = (
                 <div className={theme.pictureItemsWrapper}>
                     {currentPictures.map((picture, index) => {
-                        const pictureUrl = this.generatePictureURL(picture.filename);
+                        const pictureUrl = getProductPictureUrl(picture.filename);
 
                         return (
                             <div className={theme.pictureItem} key={`picture-item-${index}`}>

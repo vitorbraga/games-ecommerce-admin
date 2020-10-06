@@ -96,9 +96,9 @@ export class ProductList extends React.PureComponent<Props, State> {
     };
 
     private renderProductsTable() {
-        const { products, fetchStatus } = this.state;
+        const { products } = this.state;
 
-        if (products.length === 0 && fetchStatus === FetchStatusEnum.initial) {
+        if (products.length === 0) {
             return <div>No products.</div>;
         } else if (products.length > 0) {
             return (

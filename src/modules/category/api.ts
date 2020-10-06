@@ -1,13 +1,13 @@
 import { serverBaseUrl, headersBuilder } from '../../utils/api-helper';
 import * as Model from './model';
-import { errorMapper } from '../../utils/messages-mapper';
+import { getErrorMessage } from '../../utils/messages-mapper';
 
 export const getFullCategoryTrees = async (): Promise<Model.Category[]> => {
     const response: Response = await fetch(`${serverBaseUrl}/categories`);
     const fullCategoriesResponse: Model.GetFullCategoriesTreeResponse = await response.json();
 
     if ('error' in fullCategoriesResponse) {
-        throw new Error(errorMapper[fullCategoriesResponse.error]);
+        throw new Error(getErrorMessage(fullCategoriesResponse.error));
     } else {
         return fullCategoriesResponse.categories;
     }
@@ -18,7 +18,7 @@ export const getSubCategoriesByParentId = async (parentId: string | null): Promi
     const subCategoriesResponse: Model.GetSubCategoriesByParentIdResponse = await response.json();
 
     if ('error' in subCategoriesResponse) {
-        throw new Error(errorMapper[subCategoriesResponse.error]);
+        throw new Error(getErrorMessage(subCategoriesResponse.error));
     } else {
         return subCategoriesResponse.subCategories;
     }
@@ -35,7 +35,7 @@ export const createCategory = async (authToken: string, parentId: string, key: s
     const createCategoryResponse: Model.CreateCategoryResponse = await response.json();
 
     if ('error' in createCategoryResponse) {
-        throw new Error(errorMapper[createCategoryResponse.error]);
+        throw new Error(getErrorMessage(createCategoryResponse.error));
     } else {
         return createCategoryResponse.category;
     }
@@ -51,6 +51,6 @@ export const deleteSubCategories = async (authToken: string, parentId: string): 
     const deleteCategoryResponse: Model.DeleteCategoryResponse = await response.json();
 
     if ('error' in deleteCategoryResponse) {
-        throw new Error(errorMapper[deleteCategoryResponse.error]);
+        throw new Error(getErrorMessage(deleteCategoryResponse.error));
     }
 };

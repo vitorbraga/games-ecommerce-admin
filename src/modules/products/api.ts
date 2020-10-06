@@ -1,6 +1,6 @@
 import { serverBaseUrl, headersBuilder } from '../../utils/api-helper';
 import * as Model from './model';
-import { errorMapper } from '../../utils/messages-mapper';
+import { getErrorMessage } from '../../utils/messages-mapper';
 import * as PictureModel from '../pictures/model';
 
 export const getAllProducts = async (authToken: string): Promise<Model.Product[]> => {
@@ -12,7 +12,7 @@ export const getAllProducts = async (authToken: string): Promise<Model.Product[]
     const allProductsResponse: Model.GetAllProductsResponse = await response.json();
 
     if ('error' in allProductsResponse) {
-        throw new Error(errorMapper[allProductsResponse.error]);
+        throw new Error(getErrorMessage(allProductsResponse.error));
     } else {
         return allProductsResponse.products;
     }
@@ -23,7 +23,7 @@ export const getProductById = async (productId: string): Promise<Model.Product> 
     const productResponse: Model.GetProductByIdResponse = await response.json();
 
     if ('error' in productResponse) {
-        throw new Error(errorMapper[productResponse.error]);
+        throw new Error(getErrorMessage(productResponse.error));
     } else {
         return productResponse.product;
     }
@@ -40,7 +40,7 @@ export const createProduct = async (authToken: string, productBody: Model.Create
     const createProductResponse: Model.CreateProductResponse = await response.json();
 
     if ('error' in createProductResponse) {
-        throw new Error(errorMapper[createProductResponse.error]);
+        throw new Error(getErrorMessage(createProductResponse.error));
     } else {
         return createProductResponse.product;
     }
@@ -57,7 +57,7 @@ export const updateProduct = async (authToken: string, productId: string, produc
     const updateProductResponse: Model.UpdateProductResponse = await response.json();
 
     if ('error' in updateProductResponse) {
-        throw new Error(errorMapper[updateProductResponse.error]);
+        throw new Error(getErrorMessage(updateProductResponse.error));
     } else {
         return updateProductResponse.product;
     }
@@ -74,7 +74,7 @@ export const changeProductStatus = async (authToken: string, productId: string, 
     const changeProductStatusResponse: Model.ChangeProductStatusResponse = await response.json();
 
     if ('error' in changeProductStatusResponse) {
-        throw new Error(errorMapper[changeProductStatusResponse.error]);
+        throw new Error(getErrorMessage(changeProductStatusResponse.error));
     } else {
         return changeProductStatusResponse.product;
     }
@@ -90,7 +90,7 @@ export const deleteProduct = async (authToken: string, productId: string): Promi
     const deleteProductResponse: Model.UpdateProductResponse = await response.json();
 
     if ('error' in deleteProductResponse) {
-        throw new Error(errorMapper[deleteProductResponse.error]);
+        throw new Error(getErrorMessage(deleteProductResponse.error));
     }
 };
 
@@ -99,7 +99,7 @@ export const getPicturesByProductId = async (productId: string): Promise<Picture
     const picturesResponse: Model.GetPicturesByProductIdResponse = await response.json();
 
     if ('error' in picturesResponse) {
-        throw new Error(errorMapper[picturesResponse.error]);
+        throw new Error(getErrorMessage(picturesResponse.error));
     } else {
         return picturesResponse.pictures;
     }
@@ -116,7 +116,7 @@ export const uploadProductPictures = async (authToken: string, productId: string
     const uploadPicturesResponse: Model.UploadPicturesResponse = await response.json();
 
     if ('error' in uploadPicturesResponse) {
-        throw new Error(errorMapper[uploadPicturesResponse.error]);
+        throw new Error(getErrorMessage(uploadPicturesResponse.error));
     } else {
         return uploadPicturesResponse.pictures;
     }

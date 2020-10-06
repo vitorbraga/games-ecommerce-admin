@@ -14,7 +14,7 @@ import Container from '@material-ui/core/Container';
 import { registerUser } from '../modules/user/api';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { checkPasswordComplexity } from '../utils/validators';
-import { errorMapper } from '../utils/messages-mapper';
+import { errorMapper, getErrorMessage } from '../utils/messages-mapper';
 import { FetchStatus, FetchStatusEnum } from '../utils/api-helper';
 import { ResultMessageBox } from '../widgets/result-message-box';
 
@@ -66,7 +66,7 @@ export class Register extends React.PureComponent<Props, State> {
                 } else {
                     const fieldsWithErrors = userOrFieldsWithErrors;
                     if (fieldsWithErrors.length > 0) {
-                        this.setState({ submitStatus: FetchStatusEnum.failure, registerError: errorMapper[Object.values(fieldsWithErrors[0].constraints)[0]] });
+                        this.setState({ submitStatus: FetchStatusEnum.failure, registerError: getErrorMessage((fieldsWithErrors[0].constraints)[0]) });
                     }
                 }
             } catch (error) {

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as qs from 'query-string';
+import * as Yup from 'yup';
 import { RouteComponentProps } from 'react-router-dom';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -8,11 +9,14 @@ import TextField from '@material-ui/core/TextField';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { errorMapper } from '../utils/messages-mapper';
 import { checkValidPasswordResetToken, changePasswordWithToken } from '../modules/authentication/api';
 import { ResultMessageBox } from '../widgets/result-message-box';
-import { appBaseUrl } from '../utils/api-helper';
+import { appBaseUrl, FetchStatus, FetchStatusEnum } from '../utils/api-helper';
+import { Form, Formik, FormikHelpers } from 'formik';
+import { checkPasswordComplexity } from '../utils/validators';
 
 import * as theme from './change-password-with-token.scss';
 
@@ -21,26 +25,42 @@ interface MatchParams {
     u: string;
 }
 
-type ChangePasswordProps = RouteComponentProps<MatchParams>;
+type Props = RouteComponentProps<MatchParams>;
 
-interface ChangePasswordState {
-    newPassword: string;
-    newPasswordRepeat: string;
-    submitError: string | null | undefined;
-    submitStage: 'initial' | 'submitting' | 'success';
+interface State {
+    submitStatus: FetchStatus;
+    submitError: string | null;
     tokenIsValid: boolean | undefined;
     tokenCheckError: string;
 }
 
-export class ChangePasswordWithToken extends React.PureComponent<ChangePasswordProps, ChangePasswordState> {
-    public state: ChangePasswordState = {
-        newPassword: '',
-        newPasswordRepeat: '',
-        submitError: '',
+interface FormData {
+    newPassword: string;
+    newPasswordConfirmation: string;
+}
+
+export class ChangePasswordWithToken extends React.PureComponent<Props, State> {
+    public state: State = {
+        submitStatus: FetchStatusEnum.initial,
+        submitError: null,
         tokenIsValid: undefined,
-        tokenCheckError: '',
-        submitStage: 'initial'
+        tokenCheckError: ''
     };
+
+    private formInitialValues: FormData = {
+        newPassword: '',
+        newPasswordConfirmation: ''
+    };
+
+    private validationSchema = Yup.object().shape({
+        newPassword: Yup.string()
+            .required('New password is required')
+            .test('password-complexity', errorMapper.REGISTER_PASSWORD_COMPLEXITY, checkPasswordComplexity),
+        newPasswordConfirmation: Yup.string()
+            .required('New password confirmation is required')
+            .test('password-complexity', errorMapper.REGISTER_PASSWORD_COMPLEXITY, checkPasswordComplexity)
+            .oneOf([Yup.ref('newPassword'), ''], 'New Password and New Password Confirmation must match.')
+    });
 
     public componentDidMount = async () => {
         document.title = 'Change password';
@@ -60,40 +80,40 @@ export class ChangePasswordWithToken extends React.PureComponent<ChangePasswordP
         }
     };
 
-    private handleInputChange = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.setState({ [field]: event.target.value } as Pick<ChangePasswordState, any>);
-    };
-
-    private handleSubmit = () => {
-        const { newPassword, newPasswordRepeat } = this.state;
-
-        if (!(newPassword && newPasswordRepeat)) {
-            this.setState({ submitError: errorMapper.PASSWORD_RESET_REQUIRED_FIELDS });
-            return;
-        }
-
-        if (newPassword !== newPasswordRepeat) {
-            this.setState({ submitError: errorMapper.PASSWORDS_DO_NOT_MATCH });
-            return;
-        }
-
-        this.setState({ submitStage: 'submitting', submitError: '' }, async () => {
+    private handleSubmit = (formData: FormData, { resetForm }: FormikHelpers<FormData>) => {
+        this.setState({ submitStatus: FetchStatusEnum.loading }, async () => {
             const parsedUrl = qs.parse(this.props.location.search);
             const token = parsedUrl.token;
             const userId = parsedUrl.u as string;
 
             try {
-                await changePasswordWithToken(newPassword, token!.toString(), userId);
-                this.setState({ submitStage: 'success' });
+                await changePasswordWithToken(formData.newPassword, token!.toString(), userId);
+                this.setState({ submitStatus: FetchStatusEnum.success }, () => {
+                    resetForm();
+                });
             } catch (error) {
-                this.setState({ submitStage: 'initial', submitError: error.message });
+                this.setState({ submitStatus: FetchStatusEnum.failure, submitError: error });
             }
         });
     };
 
+    private renderSubmitStatus() {
+        const { submitStatus, submitError } = this.state;
+
+        if (submitStatus === FetchStatusEnum.loading) {
+            return <div className={theme.loadingWrapper}><CircularProgress /></div>;
+        } else if (submitStatus === FetchStatusEnum.failure) {
+            return <ResultMessageBox type="error" message={submitError!} />;
+        } else if (submitStatus === FetchStatusEnum.success) {
+            const loginUrl = `${appBaseUrl}/login`;
+            return <ResultMessageBox type="success">Your password has been changed successfully! <br />Click <a href={loginUrl}>here</a> to login.</ResultMessageBox>;
+        }
+
+        return null;
+    }
+
     public render() {
-        const { submitError, tokenIsValid, tokenCheckError, submitStage } = this.state;
-        const loginUrl = `${appBaseUrl}/login`;
+        const { tokenIsValid, tokenCheckError } = this.state;
 
         if (tokenIsValid === undefined) {
             return null;
@@ -106,53 +126,66 @@ export class ChangePasswordWithToken extends React.PureComponent<ChangePasswordP
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
-                            Change password
+                            Reset your password
                         </Typography>
-                        {submitError && <ResultMessageBox type="error" message={submitError} />}
-                        {submitStage === 'submitting'
-                            && <div className={theme.loadingBox}><CircularProgress /></div>
-                        }
-                        {submitStage === 'success'
-                            && <div>
-                                <ResultMessageBox type="success">
-                                    Your password has been changed successfully! <br />Click <a href={loginUrl}>here</a> to login.
-                                </ResultMessageBox>
-                            </div>
-                        }
-                        {submitStage === 'initial'
-                            && <div className={theme.form}>
-                                <TextField
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                    name="newPassword"
-                                    label="New password"
-                                    type="password"
-                                    id="newPassword"
-                                    onChange={this.handleInputChange('newPassword')}
-                                />
-                                <TextField
-                                    variant="outlined"
-                                    margin="normal"
-                                    fullWidth
-                                    name="newPasswordRepeat"
-                                    label="Repeat new password"
-                                    type="password"
-                                    id="newPasswordRepeat"
-                                    onChange={this.handleInputChange('newPasswordRepeat')}
-                                />
-                                <Button
-                                    type="submit"
-                                    fullWidth
-                                    variant="contained"
-                                    color="primary"
-                                    onClick={this.handleSubmit}
-                                    className={theme.submit}
-                                >
-                                    Submit
-                                </Button>
-                            </div>
-                        }
+                        {this.renderSubmitStatus()}
+                        <Formik
+                            initialValues={this.formInitialValues}
+                            validationSchema={this.validationSchema}
+                            onSubmit={this.handleSubmit}
+                        >
+                            {(props) => {
+                                const { touched, errors, values, handleChange, handleBlur } = props;
+
+                                return (
+                                    <Form>
+                                        <div className={theme.form}>
+                                            <Grid container spacing={2}>
+                                                <Grid item xs={12}>
+                                                    <TextField
+                                                        variant="outlined"
+                                                        fullWidth
+                                                        name="newPassword"
+                                                        label="New password"
+                                                        type="password"
+                                                        value={values.newPassword}
+                                                        helperText={errors.newPassword && touched.newPassword ? errors.newPassword : ''}
+                                                        error={!!(errors.newPassword && touched.newPassword)}
+                                                        onChange={handleChange}
+                                                        onBlur={handleBlur}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <TextField
+                                                        variant="outlined"
+                                                        fullWidth
+                                                        name="newPasswordConfirmation"
+                                                        label="Confirm new password"
+                                                        type="password"
+                                                        value={values.newPasswordConfirmation}
+                                                        helperText={errors.newPasswordConfirmation && touched.newPasswordConfirmation ? errors.newPasswordConfirmation : ''}
+                                                        error={!!(errors.newPasswordConfirmation && touched.newPasswordConfirmation)}
+                                                        onChange={handleChange}
+                                                        onBlur={handleBlur}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={12}>
+                                                    <Button
+                                                        type="submit"
+                                                        fullWidth
+                                                        variant="contained"
+                                                        color="primary"
+                                                        className={theme.submit}
+                                                    >
+                                                        Save
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                        </div>
+                                    </Form>
+                                );
+                            }}
+                        </Formik>
                     </div>
                 </Container>
             );
