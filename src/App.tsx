@@ -28,12 +28,11 @@ const theme = createMuiTheme({
             light: '#e35183',
             dark: '#78002e'
         }
-        // error: will use the default color
     }
 });
 
 export class App extends React.Component<{}, never> {
-    render() {
+    public render() {
         return (
             <Provider store={store}>
                 <PersistGate loading={null} persistor={persistor}>
