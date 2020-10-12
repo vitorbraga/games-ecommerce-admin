@@ -45,6 +45,14 @@ export type UserRegisterResponse = {
     error: string;
 };
 
+export type ChangePasswordResponse = {
+    success: true;
+    user: User;
+} | {
+    success: false;
+    error: string;
+};
+
 export type UserUpdateResponse = UserRegisterResponse;
 
 export type GetUserResponse = {

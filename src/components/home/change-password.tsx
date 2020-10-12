@@ -10,7 +10,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { ResultMessageBox } from '../../widgets/result-message-box';
 import { errorMapper } from '../../utils/messages-mapper';
 import { UserSession } from '../../modules/user/model';
-import { changePassword } from '../../modules/authentication/api';
+import * as UserApi from '../../modules/user/api';
 import { checkPasswordComplexity } from '../../utils/validators';
 import { FetchStatus, FetchStatusEnum } from '../../utils/api-helper';
 
@@ -63,7 +63,7 @@ export class ChangePassword extends React.PureComponent<Props, State> {
         if (authToken !== null) {
             this.setState({ submitStatus: FetchStatusEnum.loading }, async () => {
                 try {
-                    await changePassword(formData.currentPassword, formData.newPassword, authToken);
+                    await UserApi.changePassword(formData.currentPassword, formData.newPassword, authToken);
                     this.setState({ submitStatus: FetchStatusEnum.success }, () => {
                         resetForm();
                     });

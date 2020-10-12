@@ -1,5 +1,3 @@
-import { User } from '../user/model';
-
 export const SET_AUTH_TOKEN = 'SET_AUTH_TOKEN';
 export const USER_LOGOUT = 'USER_LOGOUT';
 
@@ -13,14 +11,6 @@ export type LoginResponse = {
 
 export type BaseResponse = {
     success: true;
-} | {
-    success: false;
-    error: string;
-};
-
-export type ChangePasswordResponse = {
-    success: true;
-    user: User;
 } | {
     success: false;
     error: string;
