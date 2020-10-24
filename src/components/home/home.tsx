@@ -181,7 +181,7 @@ class Home extends React.PureComponent<Props, State> {
                                         <CustomTab label="Change password" {...this.a11yProps(4)} onClick={this.handleClick('change-password')} />
                                     </Tabs>
                                     <TabPanel value={tabValue} index={0}>
-                                        <Overview />
+                                        <Overview authToken={authToken!} />
                                     </TabPanel>
                                     <TabPanel value={tabValue} index={1}>
                                         <Categories authToken={authToken!} key={categoryTabKey} />

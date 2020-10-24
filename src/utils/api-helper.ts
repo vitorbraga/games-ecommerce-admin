@@ -1,6 +1,6 @@
 /* eslint-disable no-sequences */
-export const serverBaseUrl = process.env.SERVER_BASE_URL || 'http://localhost:4000';
-export const appBaseUrl = process.env.APP_BASE_URL || 'http://localhost:3000';
+export const serverBaseUrl = process.env.REACT_APP_SERVER_BASE_URL || 'http://localhost:4000';
+export const appBaseUrl = process.env.REACT_APP_WEBSITE_BASE_URL || 'http://localhost:3000';
 export const s3BucketProductPictures = process.env.REACT_APP_S3_BUCKET_PRODUCT_PICTURES || 'games-ecommerce-dev';
 
 export enum FetchStatusEnum {
